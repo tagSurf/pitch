@@ -1,0 +1,51 @@
+@import "bootstrap/_mixins";
+
+#pitch {
+	position:relative;
+	top:70px;
+	width:100%;
+
+
+	.drop-target{
+		&.top{
+			width:100%;
+			position:absolute;
+			top:0;
+			left:0;
+		}
+		&.left-corner{
+			bottom:0;
+			left:0;
+			width:20%;
+			height:20%;
+		}
+		&.right-corner{
+			bottom:0;
+			right:0;
+			width:20%;
+			height:20%;
+		}
+	}
+
+	#card {
+		width:75%;
+		border:solid 2px #BBB;
+		padding:20px 10px;			
+		z-index:10;
+		
+		background:#FFF;
+		@include border-radius(5px);
+
+		#content-wrapper{
+			
+			overflow-x:hidden;
+			overflow-y:auto;
+			height:80%;
+
+			#content{
+				font-size:1.5em;
+				line-height:1.5em;
+			}
+		}
+	}
+}

@@ -11,6 +11,12 @@
 // about supported directives.
 //
 //= require jquery
-//= require jquery_ujs
-//= require turbolinks
-//= require_tree .
+//= require bootstrap
+
+window.addEventListener("load", function () {
+    // Set a timeout...
+    setTimeout(function () {
+        // Hide the address bar!
+        window.scrollTo(0, 1);
+    }, 0);
+});

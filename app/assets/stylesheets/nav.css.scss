@@ -1,0 +1,18 @@
+#nav-bar-wrapper{
+	height:60px;
+	width:100%;
+	background:#417378;
+	position:fixed;
+	z-index:100;
+
+	.center{	
+		margin-left: auto;
+		margin-right:auto;
+		width:100px;
+	}
+
+	h1{
+		color:#F4F7D9;
+		font-size:2em;
+	}
+}

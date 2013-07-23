@@ -2,13 +2,23 @@
 <html>
 <head>
   <title>Pitch</title>
-  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
-  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <%= stylesheet_link_tag "application", media: "all" %>
+  <%= stylesheet_link_tag controller_name, media:"all" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-<%= yield %>
-
+  <div class="viewport">
+    <div id="nav-bar-wrapper">
+      <div class="center">
+        <h1>Pitch</h1>
+      </div>
+    </div>
+    <div id="content">
+      <%= yield %>
+    </div>
+	</div>
+  <%= javascript_include_tag "application", controller_name %>
 </body>
 </html>

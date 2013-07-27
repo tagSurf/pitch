@@ -4,8 +4,6 @@
 	position:relative;
 	top:70px;
 	width:100%;
-
-
 	.drop-target{
 		&.top{
 			width:100%;
@@ -29,6 +27,7 @@
 
 	#card {
 		width:75%;
+		max-width:240px;
 		border:solid 2px #BBB;
 		padding:20px 10px;			
 		z-index:10;
@@ -37,11 +36,9 @@
 		@include border-radius(5px);
 
 		#content-wrapper{
-			
 			overflow-x:hidden;
 			overflow-y:auto;
 			height:80%;
-
 			#content{
 				font-size:1.5em;
 				line-height:1.5em;

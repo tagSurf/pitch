@@ -23,19 +23,49 @@ var Pitch = {
 		Pitch.data.$elem = $(elem);
 		Pitch.data.$elem.pep({
 			droppable: '.drop-target',
-			start : function(ev, obj){
+			overlapFunction: function($a, $b){
+				var cardRect = $b[0].getBoundingClientRect();
+    			var regionRect = $a[0].getBoundingClientRect();
+
+    			if($a.hasClass("top")){
+    				return cardRect.top < regionRect.bottom;
+    			} else if ( $a.hasClass("left-corner") ){
+    				//the card is going down, and the distance between the region's right edge
+    				//and its left edge is more than 50% of the card's width
+    				return cardRect.bottom > regionRect.bottom && 
+    					(cardRect.left < regionRect.right) &&
+    					cardRect.right - regionRect.right < (cardRect.width/ 2);
+    			} else if ( $a.hasClass("right-corner") ){
+    				//the card is going down, and the distance between the region's left edge
+    				//and its right edge is more than 50% of the card's width
+    				return cardRect.bottom > regionRect.bottom && 
+    					(cardRect.right > regionRect.left) &&
+    					cardRect.right - regionRect.left > (cardRect.width/ 2);
+    			}
+    			return false;
+			},
+ 	 		//smooths out animation
+ 	 		useCSSTranslation: false,
+			start : function(ev, obj) {
 				//the card has started moving
 			},
-			stop : function(ev, obj){
+			stop : function(ev, obj) {
 				//the card has stopped moving
-
+				Pitch.rotateCard(0);
 			},
-			rest: function(ev, obj){
+			rest: function(ev, obj) {
 				//the card has come to rest
-				
+				if (obj.activeDropRegions.length == 0) {
+					//center the card
+					Pitch.centerCard();
+				}
+			}, 
+			drag: function(ev, obj) {
+				var velocity = obj.velocity();
+	 			var rotation = (velocity.x)/10;
+				Pitch.rotateCard(rotation);
 			}
 		});
-
 		Pitch.resizeParent();
 	},
 	resizeParent : function() {
@@ -44,6 +74,15 @@ var Pitch = {
 			$parent.height(window.innerHeight - $parent.position().top);
 			Pitch.centerCard();
 		}
+	},
+	rotateCard : function(degree){
+		Pitch.data.$elem.css({
+      		"-webkit-transform": "rotate("+ degree +"deg)",
+         	"-moz-transform": "rotate("+ degree +"deg)",
+          	"-ms-transform": "rotate("+ degree +"deg)",
+           	"-o-transform": "rotate("+ degree +"deg)",
+            "transform": "rotate("+ degree +"deg)" 
+        });
 	}
 };
 

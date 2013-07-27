@@ -6,8 +6,6 @@ set :deploy_to, "/var/www/pitch"
 
 #deployment server's user
 set :user, "ubuntu"
-set :use_sudo, true
-
 #github settings
 set :scm, :git
 set :ssh_options, { :forward_agent => true }

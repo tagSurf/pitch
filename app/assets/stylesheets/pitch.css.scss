@@ -2,7 +2,7 @@
 
 #pitch {
 	position:relative;
-	top:60px;
+	top:40px;
 	width:100%;
 	
 	-webkit-transition: translate3d(0,0,0);
@@ -37,13 +37,10 @@
 			right:0;
 			width:50%;
 
-			&.pep-dpa 
-			{ 
+			&.pep-dpa { 
 				background: green 
 			}
 		}
-		
-
 	}
 
 	#card {

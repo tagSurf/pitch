@@ -50,18 +50,18 @@ var Pitch = {
 				//the card has started moving
 			},
 			stop : function(ev, obj) {
-				//the card has stopped moving
-			},
-			rest: function(ev, obj) {
-				//the card has come to rest
+				//the card has stopped moving, 
+				//if its not moving back to the 
 				if (obj.activeDropRegions.length == 0) {
 					//center the card
 					Pitch.centerCard();
 				}
+			},
+			rest: function(ev, obj) {
+				//the card has come to rest
+				
 			}, 
 			drag: function(ev, obj) {
-				var velocity = obj.velocity();
-	 			var rotation = (velocity.x)/10;
 			}
 		});
 		Pitch.resizeParent();

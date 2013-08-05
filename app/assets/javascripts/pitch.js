@@ -31,26 +31,65 @@ var Pitch = {
 				var cardRect = $b[0].getBoundingClientRect();
     			var regionRect = $a[0].getBoundingClientRect();
 
+    			displayMaybe = function(){
+    				$b.addClass("maybe");
+    				$b.removeClass("no");
+    				$b.removeClass("yes");
+    			};
+
+    			displayNo = function(){
+    				$b.removeClass("maybe");
+    				$b.addClass("no");
+    				$b.removeClass("yes");
+    			}
+
+    			displayYes = function(){
+    				$b.removeClass("maybe");
+    				$b.removeClass("no");
+    				$b.addClass("yes");
+    			}
+
+    			var overlaps = false;
     			if($a.hasClass("top")){
-    				return cardRect.top < regionRect.bottom;
-    			} else if ( $a.hasClass("left-bottom") ){
+    				overlaps = cardRect.top < regionRect.bottom;
+    				if(overlaps){
+    					displayMaybe();
+    				}
+    			} else if ($a.hasClass("left")){
+					overlaps = cardRect.left < regionRect.right;
+					if(overlaps){
+						displayNo();
+					}
+    			} else if ($a.hasClass("left-bottom")){
     				//the card is going down, and the distance between the region's right edge
     				//and its left edge is more than 50% of the card's width
-    				return cardRect.bottom > regionRect.bottom && 
+    			
+    				overlaps = cardRect.bottom > regionRect.bottom && 
     					(cardRect.left < regionRect.right) &&
     					cardRect.right - regionRect.right < (cardRect.width/ 2);
-    			} else if ( $a.hasClass("right-bottom") ){
+    				
+    				if(overlaps){
+    					displayNo();
+    				}
+    			} else if ($a.hasClass("right-bottom") ){
     				//the card is going down, and the distance between the region's left edge
     				//and its right edge is more than 50% of the card's width
-    				return cardRect.bottom > regionRect.bottom && 
+    				
+    				overlaps = cardRect.bottom > regionRect.bottom && 
     					(cardRect.right > regionRect.left) &&
     					cardRect.right - regionRect.left > (cardRect.width/ 2);
-    			} else if($a.hasClass("left")){
-					return cardRect.left < regionRect.right;
-    			} else if($a.hasClass("right")){
-    				return cardRect.right > regionRect.left;
+    				
+    				if(overlaps){
+    					displayYes();
+    				}
+    			} else if ($a.hasClass("right")){
+    				
+    				overlaps = cardRect.right > regionRect.left;
+    				if(overlaps){
+    					displayYes();
+    				}
     			}
-    			return false;
+    			return overlaps;
 			},
  	 		//smooths out animation
  	 		useCSSTranslation: false,
@@ -63,6 +102,7 @@ var Pitch = {
 				if (obj.activeDropRegions.length == 0) {
 					//center the card
 					Pitch.centerCard();
+					Pitch.data.$elem.removeClass("maybe").removeClass("no").removeClass("yes");
 				}
 			},
 			rest: function(ev, obj) {
@@ -78,7 +118,7 @@ var Pitch = {
 	},
 	submit : function(){
 		var elem = Pitch.data.$elem;
-
+/*
 		var $selection;
 		for(var i =0; i < elem.activeDropRegions.length; i ++){
 			var $region = elem.activeDropRegions[0];
@@ -93,8 +133,9 @@ var Pitch = {
 		}
 
 		if($selection){
-			
+
 		}
+*/
 	},
 	resizeParent : function() {
 		if(Pitch.data.$elem  !== "undefined"){

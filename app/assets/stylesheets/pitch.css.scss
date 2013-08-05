@@ -47,33 +47,42 @@
 	#card {
 		width:75%;
 		max-width:240px;
-		border:solid 2px #BBB;
-		z-index:10;
 		
+		z-index:10;
 		background:#FFF;
-		@include border-radius(5px);
 
 		-webkit-box-shadow: 0 10px 10px rgba(0,0,0, 0.7);   
 	  	-moz-box-shadow: 0 10px 10px rgba(0, 0, 0, 0.7);
 	  	box-shadow: 0 10px 10px rgba(0, 0, 0, 0.7);
 
-		&.maybe{
+		@include border-radius(5px);
 
+
+
+		&.maybe{
+			#content-title{
+				background:#6EC3CC;
+			}
 		}
 
 		&.yes{
-
+			#content-title{
+				background:green;
+			}
 		}
 
 		&.no{
-
+			#content-title{
+				background:red;
+			}
 		}
 
 		#content-title{
-			background:#A4CFBE;
+			background:#ccc;
 			padding:5px;
 			font-size:1.5em;
 			color:#FFF;
+			@include border-radius(5px 5px 0 0);
 		}
 
 		#content-wrapper{
@@ -86,10 +95,5 @@
 				line-height:1.5em;
 			}
 		}
-	} 
-
-	#card:after{
-		content: "";
-	  
 	}
 }

@@ -10,36 +10,63 @@
 
 	.drop-target{
 		position:absolute;
-		height:20px;
+		height:1%;
 		opacity:.6;
 		z-index:20;
 		&.top{
-			width:100%;
+			left:1%;
+			width:98%;
 			top:0;
-			left:0;
 
-			&.pep-dpa
-			{ 
+			/*
+			&.pep-dpa{ 
 				background: yellow 
 			}
+			*/
 		}
-		&.left-corner{
-			bottom:0;
+
+		&.left{
 			left:0;
-			width:50%;
-			&.pep-dpa
-			{ 
+			height:100%;
+			width:1%;
+			/*
+			&.pep-dpa{ 
 				background: red 
 			}
+			*/
 		}
-		&.right-corner{
-			bottom:0;
-			right:0;
-			width:50%;
 
+		&.left-bottom{
+			bottom:0;
+			left:1%;
+			width:49%;
+			/*
+			&.pep-dpa{ 
+				background: red 
+			}
+			*/
+		}
+
+		&.right{
+			right:0;
+			height:100%;
+			width:1%;
+			/*
+			&.pep-dpa{ 
+				background: green 
+			}
+			*/
+		}
+
+		&.right-bottom{
+			bottom:0;
+			right:1%;
+			width:49%;
+			/*
 			&.pep-dpa { 
 				background: green 
 			}
+			*/
 		}
 	}
 

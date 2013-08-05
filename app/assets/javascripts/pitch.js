@@ -1,5 +1,9 @@
 //=require jquery.pep.min.js
 
+
+//this is inteded to encapsulate logic around the card
+//it may be worth refactoring this code with Angular.js in the future to decouple
+//the business logic from the UI.
 var Pitch = {
 	centerCard : function (){
 		if(Pitch.data.$elem  !== "undefined"){
@@ -29,18 +33,22 @@ var Pitch = {
 
     			if($a.hasClass("top")){
     				return cardRect.top < regionRect.bottom;
-    			} else if ( $a.hasClass("left-corner") ){
+    			} else if ( $a.hasClass("left-bottom") ){
     				//the card is going down, and the distance between the region's right edge
     				//and its left edge is more than 50% of the card's width
     				return cardRect.bottom > regionRect.bottom && 
     					(cardRect.left < regionRect.right) &&
     					cardRect.right - regionRect.right < (cardRect.width/ 2);
-    			} else if ( $a.hasClass("right-corner") ){
+    			} else if ( $a.hasClass("right-bottom") ){
     				//the card is going down, and the distance between the region's left edge
     				//and its right edge is more than 50% of the card's width
     				return cardRect.bottom > regionRect.bottom && 
     					(cardRect.right > regionRect.left) &&
     					cardRect.right - regionRect.left > (cardRect.width/ 2);
+    			} else if($a.hasClass("left")){
+					return cardRect.left < regionRect.right;
+    			} else if($a.hasClass("right")){
+    				return cardRect.right > regionRect.left;
     			}
     			return false;
 			},
@@ -59,12 +67,34 @@ var Pitch = {
 			},
 			rest: function(ev, obj) {
 				//the card has come to rest
-				
+				if(obj.activeDropRegions.length > 0){
+					Pitch.submit();
+				}
 			}, 
 			drag: function(ev, obj) {
 			}
 		});
 		Pitch.resizeParent();
+	},
+	submit : function(){
+		var elem = Pitch.data.$elem;
+
+		var $selection;
+		for(var i =0; i < elem.activeDropRegions.length; i ++){
+			var $region = elem.activeDropRegions[0];
+			if(!$selection){
+				//first selection
+				$selection = $region;
+			} else if(!$region.hasClass('top')){
+				//give the yes and no region preference, 
+				//if there is overlap with maybe
+				$selection = $region;
+			}
+		}
+
+		if($selection){
+			
+		}
 	},
 	resizeParent : function() {
 		if(Pitch.data.$elem  !== "undefined"){

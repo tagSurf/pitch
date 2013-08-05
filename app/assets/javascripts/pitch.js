@@ -51,7 +51,6 @@ var Pitch = {
 			},
 			stop : function(ev, obj) {
 				//the card has stopped moving
-				Pitch.rotateCard(0);
 			},
 			rest: function(ev, obj) {
 				//the card has come to rest
@@ -63,7 +62,6 @@ var Pitch = {
 			drag: function(ev, obj) {
 				var velocity = obj.velocity();
 	 			var rotation = (velocity.x)/10;
-				Pitch.rotateCard(rotation);
 			}
 		});
 		Pitch.resizeParent();
@@ -75,15 +73,6 @@ var Pitch = {
 			Pitch.centerCard();
 		}
 	},
-	rotateCard : function(degree){
-		Pitch.data.$elem.css({
-      		"-webkit-transform": "rotate("+ degree +"deg)",
-         	"-moz-transform": "rotate("+ degree +"deg)",
-          	"-ms-transform": "rotate("+ degree +"deg)",
-           	"-o-transform": "rotate("+ degree +"deg)",
-            "transform": "rotate("+ degree +"deg)" 
-        });
-	}
 };
 
 $(document).ready(function() {

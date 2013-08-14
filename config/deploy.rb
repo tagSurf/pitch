@@ -1,12 +1,12 @@
 require "bundler/capistrano" 
+require "rvm/capistrano"
 
 set :application, "pitch"
 set :repository,  "git@github.com:Undclrd/pitch.git"
 set :deploy_to, "/var/www/pitch"
 
-#deployment server's user
-set :user, "ubuntu"
-#github settings
+set :user, "ubuntu" #deployment server's user
+
 set :scm, :git
 set :ssh_options, { :forward_agent => true }
 set :branch, "master"
@@ -15,10 +15,24 @@ role :web, "pitch-web" # Your HTTP server, Apache/etc
 role :app, "pitch-web" # This may be the same as your `Web` server
 
 role :db,  "pitch-web", :primary => true # This is where Rails migrations will run
-#role :db,  "your slave db-server here"
+
+
+#RVM for capistrano settings, probably best to break these out into a separate file...
+
+set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
+set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
+
+#before 'deploy:setup', 'rvm:install_rvm'  # install RVM
+#before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset, OR:
+# before 'deploy:setup', 'rvm:create_gemset' # only create gemset
+
+#looks like this remove the path argument to bundle install
+set :bundle_dir, ''
+set :bundle_flags, '--system --quiet'
+
 
 # if you want to clean up old releases on each deploy uncomment this:
-# after "deploy:restart", "deploy:cleanup"
+after "deploy:restart", "deploy:cleanup"
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts

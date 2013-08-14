@@ -17,14 +17,10 @@ role :app, "pitch-web" # This may be the same as your `Web` server
 role :db,  "pitch-web", :primary => true # This is where Rails migrations will run
 
 
-#RVM for capistrano settings, probably best to break these out into a separate file...
-
+#RVM for capistrano settings, probably best to break these out into a separate file,
+#since this is only related to the cap:setup task
 set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
 set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
-
-#before 'deploy:setup', 'rvm:install_rvm'  # install RVM
-#before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset, OR:
-# before 'deploy:setup', 'rvm:create_gemset' # only create gemset
 
 #looks like this remove the path argument to bundle install
 set :bundle_dir, ''

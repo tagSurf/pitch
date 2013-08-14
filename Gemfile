@@ -3,9 +3,6 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.0'
 
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
-
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
 
@@ -30,6 +27,10 @@ gem 'jbuilder', '~> 1.2'
 
 gem 'devise'
 
+#use mysql as the gem for ActiveRecord
+gem 'mysql2'
+gem 'sqlite3'
+
 group :development do
 	gem "capistrano"
 end
@@ -45,8 +46,6 @@ end
 # Use unicorn as the app server
 # gem 'unicorn'
 
-# Use Capistrano for deployment
-# gem 'capistrano', group: :development
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]

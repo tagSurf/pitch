@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require bootstrap
+//= require_tree
 
 window.addEventListener("load", function () {
     // Set a timeout...

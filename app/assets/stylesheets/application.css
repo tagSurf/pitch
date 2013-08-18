@@ -10,8 +10,8 @@
  *
 
  *= require bootstrap
- *= require nav
  *= require_self
+ *= require_tree
  */
 
 

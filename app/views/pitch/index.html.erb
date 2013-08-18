@@ -18,3 +18,14 @@
 	<div class="drop-target right"></div>
 	<div class="drop-target right-bottom"></div>
 </div>
+<% content_for :script do %>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		Pitch.init("nav","#card");
+
+		$(window).resize(function(){
+			Pitch.resizeParent();		
+		});
+	});
+	</script>
+<% end %>

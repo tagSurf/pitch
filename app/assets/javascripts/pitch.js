@@ -146,11 +146,3 @@ var Pitch = {
 	},
 };
 
-$(document).ready(function() {
-	Pitch.init("nav","#card");
-
-	$(window).resize(function(){
-		Pitch.resizeParent();		
-	});
-});
-

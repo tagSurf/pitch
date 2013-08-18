@@ -11,7 +11,7 @@
 // about supported directives.
 //
 //= require jquery
-//= require bootstrap
+//= require twitter/bootstrap
 //= require_tree
 
 window.addEventListener("load", function () {

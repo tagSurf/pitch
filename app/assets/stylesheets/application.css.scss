@@ -9,11 +9,11 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
 
- *= require bootstrap
  *= require_self
  *= require_tree
  */
 
+@import "twitter/bootstrap";
 
 html,body{
 	margin:0;
@@ -26,7 +26,20 @@ body{
 	font-size: 14px;
 }
 
-.viewport{
+#viewport{
 	min-height: 520px;
 }
 
+#content{
+	position:relative;
+	top:40px;
+	width:100%;
+	padding:10px;
+}
+
+
+.form-control{
+	font-size: 16px;
+	height: auto;
+	padding: 10px;	
+}

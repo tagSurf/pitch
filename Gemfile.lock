@@ -1,3 +1,12 @@
+GIT
+  remote: git://github.com/anjlab/bootstrap-rails.git
+  revision: bdbc7a7fc98df40ae7f015bb1d1bfd40e03f86ed
+  branch: 3.0.0
+  specs:
+    anjlab-bootstrap-rails (3.0.0.rc2)
+      railties (>= 3.0)
+      sass (>= 3.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -28,8 +37,9 @@ GEM
     arel (4.0.0)
     atomic (1.1.10)
     bcrypt-ruby (3.1.1)
-    bootstrap-sass (2.3.2.1)
-      sass (~> 3.2)
+    bootstrap-glyphicons (0.0.1)
+      railties (>= 3.0)
+      sass (>= 3.2)
     builder (3.1.4)
     capistrano (2.15.5)
       highline
@@ -142,7 +152,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bootstrap-sass
+  anjlab-bootstrap-rails!
+  bootstrap-glyphicons
   capistrano
   devise
   execjs

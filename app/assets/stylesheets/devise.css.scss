@@ -1,0 +1,18 @@
+#sign-in-form{
+	margin-left:auto;
+	margin-right:auto;
+
+	max-width:300px;
+
+	
+	input[type="email"] {
+		margin-bottom: -1px;
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+
+	input[type="password"] {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+}

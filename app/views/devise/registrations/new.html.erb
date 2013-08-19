@@ -1,21 +1,30 @@
-<div id="registration-form">
+<div class="mobile-form" id="registration-form">
+  <div class="message alert alert-success" id="success-message" style="display:none"></div>
+  <div class="message alert alert-danger" id="error-message"  style="display:none"></div>
+
   <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
     <div class="form-group">
-      <%= f.label :email %>
-      <%= f.email_field :email, :autofocus => true %>
+      <%= f.label :email, :class => "control-label" %>
+      <%= f.email_field :email, :autofocus => true, :class => "form-control", :id => "email" %>
     </div>
     <div class="form-group">
-      <%= f.label :password %>  
-      <%= f.password_field :password %>
+      <%= f.label :password, :class => "control-label" %>  
+      <%= f.password_field :password, :class => "form-control", :id => "password" %>
     </div>
     <div class="form-group">
-      <%= f.label :password_confirmation %>
-      <%= f.password_field :password_confirmation %>
+      <%= f.label :password_confirmation, :class => "control-label" %>
+      <%= f.password_field :password_confirmation, :class => "form-control", :id => "password_confirmation"  %>
     </div>
-    <div>
-      <%= f.submit "Register", :class => "btn btn-default btn-lg btn-block" %>
-    </div>
+    <%= f.submit "Register", :class => "btn btn-default btn-lg btn-block" %>
   <% end %>
+  <%= render "devise/shared/links" %>
 </div>
 
-<%= render "devise/shared/links" %>
+<% content_for :script do %>
+  <script type="text/javascript">
+    $(document).ready(function(){
+        $('form').submit(Application.ajaxFormSubmit);
+      }
+    );
+  </script>
+<% end %>

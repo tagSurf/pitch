@@ -6,8 +6,8 @@
 //the business logic from the UI.
 var PitchCardView = {
 	centerCard : function (){
-		if(Pitch.data.$elem  !== "undefined"){
-			var $elem = Pitch.data.$elem;
+		if(PitchCardView.data.$elem  !== "undefined"){
+			var $elem = PitchCardView.data.$elem;
 
 			var width = $elem.outerWidth();
 			var height = $elem.outerHeight();
@@ -23,9 +23,9 @@ var PitchCardView = {
 		}
 	},
 	init : function (nav, elem) {
-		Pitch.data = {};
-		Pitch.data.$elem = $(elem);
-		Pitch.data.$elem.pep({
+		PitchCardView.data = {};
+		PitchCardView.data.$elem = $(elem);
+		PitchCardView.data.$elem.pep({
 			droppable: '.drop-target',
 			overlapFunction: function($a, $b){
 				var cardRect = $b[0].getBoundingClientRect();
@@ -101,8 +101,8 @@ var PitchCardView = {
 				//if its not moving back to the 
 				if (obj.activeDropRegions.length == 0) {
 					//center the card
-					Pitch.centerCard();
-					Pitch.data.$elem.removeClass("maybe").removeClass("no").removeClass("yes");
+					PitchCardView.centerCard();
+					PitchCardView.data.$elem.removeClass("maybe").removeClass("no").removeClass("yes");
 				}
 			},
 			rest: function(ev, obj) {
@@ -114,7 +114,7 @@ var PitchCardView = {
 			drag: function(ev, obj) {
 			}
 		});
-		Pitch.resizeParent();
+		PitchCardView.resizeParent();
 	},
 	submit : function(){
 		var elem = Pitch.data.$elem;
@@ -138,10 +138,10 @@ var PitchCardView = {
 */
 	},
 	resizeParent : function() {
-		if(Pitch.data.$elem  !== "undefined"){
-			var $parent = Pitch.data.$elem.parent();
+		if(PitchCardView.data.$elem  !== "undefined"){
+			var $parent = PitchCardView.data.$elem.parent();
 			$parent.height(window.innerHeight - $parent.position().top);
-			Pitch.centerCard();
+			PitchCardView.centerCard();
 		}
 	},
 };

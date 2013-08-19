@@ -51,12 +51,33 @@ Application = {
 	},
 	ajaxFormSubmit : function(){
 		var $form = $(this);
+
+		$form.find('.form-group').removeClass('has-error');
+		$form.find('ul.input-errors').remove();
+
 		var formData =  $form.serializeObject();
 
 		var request = Application.ajaxPost(
 			$form.attr('action'), 
 			formData
 		);
+
+		request.done(function(data){
+			if(typeof data !== 'undefined' && typeof data.status !== 'undefined'){
+				var successful = data.status === 'success';
+
+				if(!successful && typeof data.result.errors !== 'undefined'){
+					$.each(data.result.errors, function(key, value){
+						var $input = $("#" + key );
+						if($input){
+							$input.closest('.form-group').addClass('has-error');
+							//an array of errors
+							$input.before('<ul class="input-errors"><li>'+value.join('</li><li>')+'</li></p>')
+						}
+					});
+				}
+			}
+		});
 		return false;
 	},
 	showProgress : function(showProgress) {

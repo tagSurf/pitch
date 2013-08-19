@@ -1,4 +1,4 @@
-@import "bootstrap/_mixins";
+@import "twitter/bootstrap/_mixins";
 
 #pitch {
 	-webkit-transition: translate3d(0,0,0);
@@ -51,7 +51,7 @@
 	  	-moz-box-shadow: 0 10px 10px rgba(0, 0, 0, 0.7);
 	  	box-shadow: 0 10px 10px rgba(0, 0, 0, 0.7);
 
-		@include border-radius(5px);
+		border-radius:5px;
 
 
 
@@ -78,7 +78,7 @@
 			padding:5px;
 			font-size:1.5em;
 			color:#FFF;
-			@include border-radius(5px 5px 0 0);
+			border-radius:5px 5px 0 0;
 		}
 
 		#content-wrapper{
@@ -86,7 +86,7 @@
 			overflow-x:hidden;
 			overflow-y:auto;
 			height:80%;
-			#content{
+			#card-content{
 				font-size:1.5em;
 				line-height:1.5em;
 			}

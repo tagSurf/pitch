@@ -219,6 +219,10 @@ Devise.setup do |config|
   # The "*/*" below is required to match Internet Explorer requests.
   # config.navigational_formats = ["*/*", :html]
 
+
+  #don't return an HTTP 401 for JSON, so we can use JSON-based messages
+  config.navigational_formats = ["*/*", :html, :json]
+
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
 
@@ -249,4 +253,6 @@ Devise.setup do |config|
   # When using omniauth, Devise cannot automatically set Omniauth path,
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = "/my_engine/users/auth"
+  
+  config.http_authenticatable_on_xhr = false
 end

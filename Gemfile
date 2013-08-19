@@ -30,6 +30,7 @@ group :development do
 	gem "capistrano"
   gem "rvm-capistrano"
   gem "quiet_assets"
+  gem "debugger"
 end
 
 group :doc do
@@ -42,8 +43,4 @@ end
 
 # Use unicorn as the app server
 # gem 'unicorn'
-
-
-# Use debugger
-# gem 'debugger', group: [:development, :test]
 

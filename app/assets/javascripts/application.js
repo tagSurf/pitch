@@ -11,13 +11,100 @@
 // about supported directives.
 //
 //= require jquery
+//= require jquery.serialize-object.js
 //= require twitter/bootstrap
-//= require_tree
+//= require_tree .
 
-window.addEventListener("load", function () {
+window.addEventListener('load', function () {
     // Set a timeout...
     setTimeout(function () {
         // Hide the address bar!
         window.scrollTo(0, 1);
     }, 0);
+});
+
+Application = {
+	ajaxGet : function(url) {
+		Application.showProgress(true);
+
+		var request = $.ajax({
+			url : url,
+			type : 'GET'
+		});
+		request.always(Application.defaultOnComplete);
+		request.done(Application.defaultOnSuccess);
+		request.fail(Application.defaultOnError);
+		return request;
+	},
+	ajaxPost : function(url, data) {
+		Application.showProgress(true);
+		var request = $.ajax({
+			data : data,
+			url : url,
+			type : 'POST'
+		});
+
+		request.always(Application.defaultOnComplete);
+		request.done(Application.defaultOnSuccess);
+		request.fail(Application.defaultOnError);
+		return request;
+	},
+	ajaxFormSubmit : function(){
+		var $form = $(this);
+		var formData =  $form.serializeObject();
+
+		var request = Application.ajaxPost(
+			$form.attr('action'), 
+			formData
+		);
+		return false;
+	},
+	showProgress : function(showProgress) {
+		if(showProgress){
+			$('.progress').show();
+		} else {
+			$('.progress').hide();
+		}
+	},
+	defaultOnComplete : function() {
+		Application.showProgress(false);
+	},
+	defaultOnSuccess : function(data, textStatus, jqXHR) {
+		if(typeof data !== 'undefined' && typeof data.status != 'undefined'){
+			var successful = data.status === 'success';
+
+			if(typeof data.result !== 'undefined' && data.result.message){
+				Application.postMessage(data.result.message, successful);
+			} else if (data.result.redirect) {
+				window.location.replace(data.result.redirect);
+			}
+		}
+	},
+	defaultOnError : function(jqXHR, textStatus, errorThrown) {
+		Application.postMessage('An unknown error occurred while processing your request.', false);
+	},
+	postMessage : function(message, isSuccess) {
+		$('.message').hide();
+		if(isSuccess){
+			$('#success-message').html(message).show();
+			setTimeout(function(){
+				$('#success-message').hide();
+			}, 1000 * 5);
+		} else {
+			$('#error-message').html(message).show();
+
+		}
+	},
+	init : function(){
+		$.ajaxSetup({
+	    	beforeSend: function( xhr ) {
+	      		var token = $('meta[name="csrf-token"]').attr('content');
+	      		if (token) xhr.setRequestHeader('X-CSRF-Token', token);
+	   	 	}
+	  	});
+	}
+};
+
+$(document).ready(function(){
+	Application.init();
 });

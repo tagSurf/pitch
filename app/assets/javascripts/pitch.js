@@ -4,7 +4,7 @@
 //this is inteded to encapsulate logic around the card
 //it may be worth refactoring this code with Angular.js in the future to decouple
 //the business logic from the UI.
-var Pitch = {
+var PitchCardView = {
 	centerCard : function (){
 		if(Pitch.data.$elem  !== "undefined"){
 			var $elem = Pitch.data.$elem;

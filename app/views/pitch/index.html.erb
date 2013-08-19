@@ -21,10 +21,10 @@
 <% content_for :script do %>
 	<script type="text/javascript">
 	$(document).ready(function() {
-		Pitch.init("nav","#card");
+		PitchCardView.init("nav","#card");
 
 		$(window).resize(function(){
-			Pitch.resizeParent();		
+			PitchCardView.resizeParent();		
 		});
 	});
 	</script>

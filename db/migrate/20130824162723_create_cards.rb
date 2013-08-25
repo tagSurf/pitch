@@ -7,7 +7,7 @@ class CreateCards < ActiveRecord::Migration
       t.string :description
       #add default timestamps
       t.timestamps
-      t.integer :author_id
+      t.integer :author_id, :null => false
     end
     #add foreign key reference to users
     reversible do |dir|

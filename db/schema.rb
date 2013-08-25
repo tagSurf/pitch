@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20130824162723) do
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "author_id"
+    t.integer  "author_id",   null: false
   end
 
   add_index "cards", ["author_id"], name: "fk_cards_users", using: :btree

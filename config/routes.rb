@@ -5,8 +5,9 @@ Pitch::Application.routes.draw do
 
   devise_for :users, :controllers => {:sessions => 'sessions', :registrations => 'registrations'}
 
-  root 'pitch#index'
+  resources :cards
 
+  root 'cards#index'
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
 
@@ -44,7 +45,7 @@ Pitch::Application.routes.draw do
   #       get 'recent', on: :collection
   #     end
   #   end
-  
+
   # Example resource route with concerns:
   #   concern :toggleable do
   #     post 'toggle'

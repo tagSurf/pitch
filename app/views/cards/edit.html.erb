@@ -1,0 +1,23 @@
+<div class="mobile-form" id="create-card-form">
+  <div class="message alert alert-success" id="success-message" style="display:none"></div>
+  <div class="message alert alert-danger" id="error-message"  style="display:none"></div>
+
+  <%= form_for(@card, :url => card_path(@card), :class => "create-card") do |f| %>
+    <div class="form-group">
+      <%= f.label :excerpt, "Tell us about your idea", :class => "control-label" %>
+      <%= f.text_area :excerpt, :class => "form-control", :id => "excerpt" %>
+    </div>
+    <%= f.submit "Share", :class => "btn btn-default btn-lg btn-block" %>
+  <% end %>
+</div>
+
+<% content_for :script do %>
+  <script type="text/javascript">
+    $(document).ready(function(){
+        $('form').submit(Application.ajaxFormSubmit);
+      }
+    );
+  </script>
+<% end %>
+
+

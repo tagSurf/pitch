@@ -1,6 +1,5 @@
 //=require jquery.pep.min.js
 
-
 //this is inteded to encapsulate logic around the card
 //it may be worth refactoring this code with Angular.js in the future to decouple
 //the business logic from the UI.
@@ -11,7 +10,7 @@ var PitchCardView = {
 
 			var width = $elem.outerWidth();
 			var height = $elem.outerHeight();
-			
+
 			var parentWidth = $elem.parent().width();
 			var parentHeight = $elem.parent().height();
 
@@ -63,27 +62,27 @@ var PitchCardView = {
     			} else if ($a.hasClass("left-bottom")){
     				//the card is going down, and the distance between the region's right edge
     				//and its left edge is more than 50% of the card's width
-    			
-    				overlaps = cardRect.bottom > regionRect.bottom && 
+
+    				overlaps = cardRect.bottom > regionRect.bottom &&
     					(cardRect.left < regionRect.right) &&
     					cardRect.right - regionRect.right < (cardRect.width/ 2);
-    				
+
     				if(overlaps){
     					displayNo();
     				}
     			} else if ($a.hasClass("right-bottom") ){
     				//the card is going down, and the distance between the region's left edge
     				//and its right edge is more than 50% of the card's width
-    				
-    				overlaps = cardRect.bottom > regionRect.bottom && 
+
+    				overlaps = cardRect.bottom > regionRect.bottom &&
     					(cardRect.right > regionRect.left) &&
     					cardRect.right - regionRect.left > (cardRect.width/ 2);
-    				
+
     				if(overlaps){
     					displayYes();
     				}
     			} else if ($a.hasClass("right")){
-    				
+
     				overlaps = cardRect.right > regionRect.left;
     				if(overlaps){
     					displayYes();
@@ -97,8 +96,8 @@ var PitchCardView = {
 				//the card has started moving
 			},
 			stop : function(ev, obj) {
-				//the card has stopped moving, 
-				//if its not moving back to the 
+				//the card has stopped moving,
+				//if its not moving back to the
 				if (obj.activeDropRegions.length == 0) {
 					//center the card
 					PitchCardView.centerCard();
@@ -110,7 +109,7 @@ var PitchCardView = {
 				if(obj.activeDropRegions.length > 0){
 					Pitch.submit();
 				}
-			}, 
+			},
 			drag: function(ev, obj) {
 			}
 		});
@@ -126,7 +125,7 @@ var PitchCardView = {
 				//first selection
 				$selection = $region;
 			} else if(!$region.hasClass('top')){
-				//give the yes and no region preference, 
+				//give the yes and no region preference,
 				//if there is overlap with maybe
 				$selection = $region;
 			}

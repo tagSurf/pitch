@@ -1,4 +1,4 @@
-class CardController < ApplicationController
+class CardsController < ApplicationController
   before_filter :authenticate_user!
 
   def index
@@ -10,6 +10,11 @@ class CardController < ApplicationController
 
   def show
     #for viewing the specific details of a card.
+  end
+
+  def new
+    @card = Card.new
+    render "edit"
   end
 
   def create
@@ -24,15 +29,15 @@ class CardController < ApplicationController
   def update
     #edit an old card, can only access this if you created this card
     @card = Card.find(params[:id])
-
     if @card.nil?
       render_404
       return
     end
-    if current_user.id <> @card.user.id
+    if current_user.id != @card.user.id
       render_403
       return
     end
+
   end
 
   def destroy

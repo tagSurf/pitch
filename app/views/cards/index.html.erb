@@ -11,12 +11,13 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="drop-target left"></div>
 	<div class="drop-target left-bottom"></div>
-	
+
 	<div class="drop-target right"></div>
 	<div class="drop-target right-bottom"></div>
+
 </div>
 <% content_for :script do %>
 	<script type="text/javascript">
@@ -24,7 +25,7 @@
 		PitchCardView.init("nav","#card");
 
 		$(window).resize(function(){
-			PitchCardView.resizeParent();		
+			PitchCardView.resizeParent();
 		});
 	});
 	</script>

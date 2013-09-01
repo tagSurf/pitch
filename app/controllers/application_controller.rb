@@ -5,10 +5,10 @@ class ApplicationController < ActionController::Base
 
   protected
   def render_404
-    render { :text => "Can't seem to find what you're looking for. Are you sure this exists?", :status => 404 }
+    render :json => { :text => "Can't seem to find what you're looking for. Are you sure this exists?", :status => 404 }
   end
 
   def render_403
-    render { :text => "You don't have permission to do this.", :status => 403 }
+    render :json => { :text => "You don't have permission to do this.", :status => 403 }
   end
 end

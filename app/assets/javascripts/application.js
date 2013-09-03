@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery.serialize-object.js
+//= require jquery.limiter.js
 //= require twitter/bootstrap
 //= require_tree .
 
@@ -58,7 +59,7 @@ Application = {
 		var formData =  $form.serializeObject();
 
 		var request = Application.ajaxPost(
-			$form.attr('action'), 
+			$form.attr('action'),
 			formData
 		);
 

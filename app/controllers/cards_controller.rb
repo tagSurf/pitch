@@ -2,10 +2,15 @@ class CardsController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    all_cards = Card.all
+    @all_cards = Card
+
+
+
     render :json => { :status => 'success',
       :result =>  { :data => all_cards}
     }
+
+
   end
 
   def show
@@ -64,12 +69,12 @@ class CardsController < ApplicationController
         :result =>  { :errors => card.errors}
       }
     elsif card.save!
-      render "json" => { :status => 'error',
-        :result =>  { :message => 'Could not save this card.'}
+      render :json => { :status => 'success',
+        :result => { :message => 'Successfully saved your card!'}
       }
     else
-      render "json" => { :status => 'success',
-        :result => { :message => 'Successfully saved your card!'}
+      render :json => { :status => 'error',
+        :result =>  { :message => 'Could not save this card.'}
       }
     end
   end

@@ -5,7 +5,9 @@
   <%= form_for(@card, :url => cards_path(@card), :class => "create-card") do |f| %>
     <div class="form-group">
       <%= f.label :excerpt, "Tell us about your idea", :class => "control-label" %>
-      <%= f.text_area :excerpt, :class => "form-control", :id => "excerpt" %>
+      <span id="char-limit" class="label label-info pull-right"></span>
+      <%= f.text_area :excerpt, :class => "form-control", :id => "excerpt", :style => "height:150px" %>
+
     </div>
     <%= f.submit "Share", :class => "btn btn-default btn-lg btn-block" %>
   <% end %>
@@ -15,6 +17,9 @@
   <script type="text/javascript">
     $(document).ready(function(){
         $('form').submit(Application.ajaxFormSubmit);
+
+        var $charLimit = $('#char-limit');
+        $("#excerpt").limiter(140, $charLimit);
       }
     );
   </script>

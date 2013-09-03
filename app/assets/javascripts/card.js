@@ -3,6 +3,7 @@
 //this is inteded to encapsulate logic around the card
 //it may be worth refactoring this code with Angular.js in the future to decouple
 //the business logic from the UI.
+
 var PitchCardView = {
 	centerCard : function (){
 		if(PitchCardView.data.$elem  !== "undefined"){
@@ -21,9 +22,11 @@ var PitchCardView = {
 			$elem.css("top", top + "px")
 		}
 	},
-	init : function (nav, elem) {
+	init : function (nav, elem, submit) {
 		PitchCardView.data = {};
 		PitchCardView.data.$elem = $(elem);
+        PitchCardView.data.submit = submit;
+
 		PitchCardView.data.$elem.pep({
 			droppable: '.drop-target',
 			overlapFunction: function($a, $b){
@@ -107,7 +110,7 @@ var PitchCardView = {
 			rest: function(ev, obj) {
 				//the card has come to rest
 				if(obj.activeDropRegions.length > 0){
-					Pitch.submit();
+					Pitch.submit(obj.activeDropRegions);
 				}
 			},
 			drag: function(ev, obj) {
@@ -115,26 +118,21 @@ var PitchCardView = {
 		});
 		PitchCardView.resizeParent();
 	},
-	submit : function(){
-		var elem = Pitch.data.$elem;
-/*
-		var $selection;
-		for(var i =0; i < elem.activeDropRegions.length; i ++){
-			var $region = elem.activeDropRegions[0];
-			if(!$selection){
-				//first selection
-				$selection = $region;
-			} else if(!$region.hasClass('top')){
-				//give the yes and no region preference,
-				//if there is overlap with maybe
-				$selection = $region;
-			}
-		}
+	submit : function(intersections){
+        var no = PitchCardView.data.$elem.hasClass("no");
+        var yes = PitchCardView.data.$elem.hasClass("yes");
+        var maybe = PitchCardView.data.$elem.hasClass("maybe");
 
-		if($selection){
+        var vote;
+        if(no){
+            vote = "no";
+        } else if(yes){
+            vote = "yes";
+        } else {
+            vote = "maybe";
+        }
 
-		}
-*/
+        PitchCardView.data.submit(vote);
 	},
 	resizeParent : function() {
 		if(PitchCardView.data.$elem  !== "undefined"){

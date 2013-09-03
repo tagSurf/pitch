@@ -13,7 +13,7 @@
 //= require jquery
 //= require jquery.serialize-object.js
 //= require jquery.limiter.js
-//= require twitter/bootstrap
+//= require bootstrap
 //= require_tree .
 
 window.addEventListener('load', function () {

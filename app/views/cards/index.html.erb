@@ -21,12 +21,38 @@
 </div>
 <% content_for :script do %>
 	<script type="text/javascript">
+	var Cards = {
+		init : function(data){
+			Cards.allCards = data;
+		},
+		fetch : function(){
+
+
+		},
+		setCurrentCard : function(){
+
+
+		},
+		submit : function(vote){
+
+			if(vote == "no" || vote == "yes"){
+				var data = {
+					"type" : vote,
+					"card_id" : Cards.current.card_id
+				};
+			}
+		}
+	};
+
+
 	$(document).ready(function() {
-		PitchCardView.init("nav","#card");
+
+		PitchCardView.init("nav", "#card", Cards.submit);
 
 		$(window).resize(function(){
 			PitchCardView.resizeParent();
 		});
+
 	});
 	</script>
 <% end %>

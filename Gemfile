@@ -4,10 +4,7 @@ gem 'rails', '4.0.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
 #Twitter bootstrap
-gem 'anjlab-bootstrap-rails', :require => 'bootstrap-rails',
-                          :github => 'anjlab/bootstrap-rails',
-                          :branch => '3.0.0'
-gem 'bootstrap-glyphicons'
+gem 'bootstrap-sass'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
@@ -25,6 +22,8 @@ gem 'devise'
 #use mysql as the gem for ActiveRecord
 gem 'mysql2'
 gem 'sqlite3'
+
+gem 'knockout-rails'
 
 group :development do
 	gem "capistrano"

@@ -2,15 +2,10 @@ class CardsController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    @all_cards = Card
-
-
-
+    all_cards = Card.all
     render :json => { :status => 'success',
       :result =>  { :data => all_cards}
     }
-
-
   end
 
   def show
@@ -24,7 +19,6 @@ class CardsController < ApplicationController
 
   def create
     #POST to create a card
-    debugger
     user = User.find(current_user.id)
     card = user.cards.new(card_params)
     save_and_render_result(card)

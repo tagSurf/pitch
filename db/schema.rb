@@ -11,15 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130824162723) do
+ActiveRecord::Schema.define(version: 20130903023303) do
 
   create_table "cards", force: true do |t|
-    t.string   "title"
     t.string   "excerpt"
-    t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "author_id",   null: false
+    t.integer  "author_id",  null: false
   end
 
   add_index "cards", ["author_id"], name: "fk_cards_users", using: :btree

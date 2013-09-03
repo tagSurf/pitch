@@ -3,5 +3,5 @@ class User < ActiveRecord::Base
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
-  has_many :card, :foreign_key => :author_id, :primary_key => :id
+  has_many :cards, :foreign_key => :author_id, :primary_key => :id
 end

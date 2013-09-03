@@ -19,11 +19,15 @@ class CardsController < ApplicationController
 
   def create
     #POST to create a card
-
+    debugger
+    user = User.find(current_user.id)
+    card = user.cards.new(card_params)
+    save_and_render_result(card)
   end
 
   def edit
-
+    @card = Card.find(params[:id])
+    render "edit"
   end
 
   def update
@@ -37,11 +41,40 @@ class CardsController < ApplicationController
       render_403
       return
     end
-
+    @card.update_attributes(card_params)
+    save_and_render_result(@card)
   end
 
   def destroy
-    #can't destroy this card
+    if @card.nil?
+      render_404
+      return
+    end
+    if current_user.id != @card.user.id
+      render_403
+      return
+    end
     @card = Card.find(params[:id])
+  end
+
+  private
+  def save_and_render_result(card)
+    if !card.valid?
+      render :json => { :status => 'error',
+        :result =>  { :errors => card.errors}
+      }
+    elsif card.save!
+      render "json" => { :status => 'error',
+        :result =>  { :message => 'Could not save this card.'}
+      }
+    else
+      render "json" => { :status => 'success',
+        :result => { :message => 'Successfully saved your card!'}
+      }
+    end
+  end
+
+  def card_params
+    params.require(:card).permit(:excerpt)
   end
 end

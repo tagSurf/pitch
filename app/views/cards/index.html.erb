@@ -1,16 +1,17 @@
 <div id="pitch">
 	<div class="drop-target top"></div>
 
+
+ 	<!-- ko if: currentCard() -->
 	<div id="card">
 		<div id="content-title">
 			<em>Card Title</em>
 		</div>
 		<div id="content-wrapper">
-			<div id="card-content">
-				Marfa meh Portland pop-up, forage blue bottle chambray. Freegan pickled small batch, helvetica ugh keffiyeh photo booth gluten-free direct ...
-			</div>
+			<div id="card-content" data-bind="html: currentCard().excerpt"></div>
 		</div>
 	</div>
+	<!-- /ko -->
 
 	<div class="drop-target left"></div>
 	<div class="drop-target left-bottom"></div>
@@ -21,7 +22,31 @@
 </div>
 <% content_for :script do %>
 	<script type="text/javascript">
-	var Cards = {
+	var CardModel = function(cardId, excerpt){
+		var self = this;
+		self.cardId = cardId;
+		self.excerpt = excerpt;
+	};
+
+	var CardViewModel = function(data){
+		var self = this;
+
+		self.cards = ko.observableArray();
+		self.currentCard = ko.observable();
+
+		for(var i = 0; i < data.cards.length; i ++){
+			var cardData = data.cards[i];
+			var model = new CarModel(cardData.card_id, cardData.excerpt);
+
+			self.cards.push(model);
+
+			if(i == 0){
+				self.currentCard(self.cards()[0]);
+			}
+		}
+	};
+
+	{
 		init : function(data){
 			Cards.allCards = data;
 		},

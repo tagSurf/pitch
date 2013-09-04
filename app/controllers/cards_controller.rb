@@ -2,10 +2,29 @@ class CardsController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    all_cards = Card.all
-    render :json => { :status => 'success',
-      :result =>  { :data => all_cards}
-    }
+    user = User.find(current_user.id)
+    #this is a naiive approach to get new cards to vote on:
+    #get the 100 most recent cards such that:
+    # - never show yes or no votes again
+    # - never show the user's cards
+    # - show maybe votes again, but always after new content
+    @all_cards = Card.where("cards.id in
+                                    (
+                                      SELECT t.id FROM
+                                      (
+                                        SELECT c.id
+                                        , CASE WHEN v.vote_type IS NOT NULL THEN -1 ELSE 1 END as priority
+                                        , c.created_at
+                                        FROM cards c
+                                        LEFT JOIN votes v ON c.id = v.card_id AND v.user_id = ?
+                                        WHERE (v.id IS NULL OR v.vote_type = 'maybe') and c.author_id <> ?
+                                      ) as t
+                                      ORDER BY t.priority DESC, t.created_at DESC
+                                    )", user.id, user.id).limit(100)
+    respond_to do |format|
+      format.html { render "index" }
+      format.json { render :json => { :status => 'success', :result =>  { :cards => @all_cards } } }
+    end
   end
 
   def show
@@ -72,7 +91,6 @@ class CardsController < ApplicationController
       }
     end
   end
-
   def card_params
     params.require(:card).permit(:excerpt)
   end

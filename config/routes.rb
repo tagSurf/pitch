@@ -6,6 +6,7 @@ Pitch::Application.routes.draw do
   devise_for :users, :controllers => {:sessions => 'sessions', :registrations => 'registrations'}
 
   resources :cards
+  resources :votes
 
   root 'cards#index'
   # You can have the root of your site routed with "root"

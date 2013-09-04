@@ -37,62 +37,32 @@
 
 		self.nextPage = nextPage;
 
-		var mapDataToCards = function(data){
-			for(var i = data.cards.length - 1; i >= 0; i --){
-				var cardData = data.cards[i];
-				var model = new CarModel(cardData.card_id, cardData.excerpt);
+		var mapDataToCards = function(cardsData){
+			if( typeof cardsData === 'undefined' || !cardsData){ return; }
+
+			for(var i = cardsData.length - 1; i >= 0; i --){
+				var card = cardsData[i];
+				var model = new CardModel(card.card_id, card.excerpt);
 				//add the to the front of the array
 				self.cards.unshift(model);
 			}
 		};
 
-
-
-		self.currentCard().vote.subscribe(
-			function(vote){
-      	if(vote === "maybe" || vote === "yes" || vote === "no"){
-      		var data = {
-      			"vote" : {
-      				"card_id" : self.currentCard().cardId,
-      				"vote_type" : data
-      			}
-      		};
-
-      		var deferred = $.ajax(
-      			{
-      				'data' : data,
-      				'type' : 'POST',
-      				'url' : '<%= @new_votes_path() %>'
-      			}
-      		);
-
-      		deferred.done(function(data, textStatus, jqXHR) {
-						if(typeof data !== 'undefined' && typeof data.status != 'undefined'){
-							var successful = data.status === 'success';
-
-							if(successful && self.cards().length > 0){
-								self.currentCard(self.cards.shift());
-							}
-						}
-					});
-    		}
-    	}
-    );
-
 		//getting more cards
 		self.fetchMoreCards = function(){
 			if(self.nextPage){
-				var deferred = $.ajax(
+				var deferred = $.ajax({
 					'type' : 'GET',
-					'url' : nextPage
-				);
+					'url' : self.nextPage
+				});
 
 				deferred.done(
 					function(data, textStatus, jqXHR) {
-						if(typeof data !== 'undefined' && typeof data.status != 'undefined'  && typeof data.result != 'undefined'){
+						debugger;
+						if(typeof data !== 'undefined' && typeof data.status != 'undefined'  && typeof data.result !== 'undefined'){
 							var successful = data.status === 'success';
 							if(successful && data.result.cards){
-								mapDataToCards(data.results.cards);
+								mapDataToCards(data.result.cards);
 							}
 						}
 					}
@@ -106,16 +76,49 @@
 
 			if(self.cards().length > 0){
 				self.currentCard(self.cards.shift());
+
+				self.currentCard().vote.subscribe(
+					function(vote){
+		      	if(vote === "maybe" || vote === "yes" || vote === "no"){
+		      		var data = {
+		      			"vote" : {
+		      				"card_id" : self.currentCard().cardId,
+		      				"vote_type" : data
+		      			}
+		      		};
+
+		      		var deferred = $.ajax(
+		      			{
+		      				'data' : data,
+		      				'type' : 'POST',
+		      				'url' : '<%= new_vote_path() %>'
+		      			}
+		      		);
+
+		      		deferred.done(function(data, textStatus, jqXHR) {
+								if(typeof data !== 'undefined' && typeof data.status != 'undefined'){
+									var successful = data.status === 'success';
+
+									if(successful && self.cards().length > 0){
+										self.currentCard(self.cards.shift());
+									}
+								}
+							});
+		    		}
+		    	}
+		    );
 			}
-			//try to get more cards every five seconds
-			window.setInterval(self.fetchMoreCards, 5 * 1000);
+			//try to get more cards every minute
+			window.setInterval(self.fetchMoreCards, 60 * 1000);
 		})();
 	};
 
 	ko.bindingHandlers.pep = {
     init : function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext){
       var $element = $(element);
+      debugger;
       var observableCard = valueAccessor();
+      var card = observableCard();
 
       var centerElement = function(){
       	var width = $element.outerWidth();
@@ -143,17 +146,17 @@
 
 	    			var overlaps = false;
 
-	    			observableCard.candidate("none");
+	    			card.candidate("none");
 
 	    			if($a.hasClass("top")){
 	    				overlaps = cardRect.top < regionRect.bottom;
 	    				if(overlaps){
-	    					observableCard.candidate("maybe");
+	    					card.candidate("maybe");
 	    				}
 	    			} else if ($a.hasClass("left")){
 							overlaps = cardRect.left < regionRect.right;
 							if(overlaps){
-								observableCard.candidate("no");
+								card.candidate("no");
 							}
 	    			} else if ($a.hasClass("left-bottom")){
 	    				//the card is going down, and the distance between the region's right edge
@@ -163,7 +166,7 @@
 	    					(cardRect.right - regionRect.right) < (cardRect.width/ 2);
 
 	    				if(overlaps){
-	    					observableCard.candidate("no");
+	    					card.candidate("no");
 	    				}
 	    			} else if ($a.hasClass("right-bottom") ){
 	    				//the card is going down, and the distance between the region's left edge
@@ -174,13 +177,13 @@
 	    					cardRect.right - regionRect.left > (cardRect.width/ 2);
 
 	    				if(overlaps){
-	    					observableCard.candidate("yes");
+	    					card.candidate("yes");
 	    				}
 	    			} else if ($a.hasClass("right")){
 
 	    				overlaps = cardRect.right > regionRect.left;
 	    				if(overlaps){
-	    					observableCard.candidate("yes");
+	    					card.candidate("yes");
 	    				}
 	    			}
 	    			return overlaps;
@@ -195,12 +198,12 @@
 						if (obj.activeDropRegions.length == 0) {
 							//center the card
 							centerElement();
-							observableCard.candidate("none");
+							card.candidate("none");
 						}
 					},
 					rest: function(ev, obj){
 						if(obj.activeDropRegions.length > 0){
-							observableCard.vote(observableCard.candidate());
+							card.vote(card.candidate());
 						}
 					}
 				}
@@ -223,8 +226,9 @@
 	};
 
 	$(document).ready(function(){
-		var data = <%=raw @all_frames.as_json.to_json%>;
-		var viewModel = new VoteViewModel(data);
+		var data = <%=raw @all_cards.as_json.to_json %>;
+		var nextPage =  '<%= cards_path(:format => "json")%>';
+		var viewModel = new VoteViewModel(data, nextPage);
 		ko.applyBindings(viewModel);
 	});
 	</script>

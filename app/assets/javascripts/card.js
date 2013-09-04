@@ -1,4 +1,5 @@
 //=require jquery.pep.min.js
+//=require knockout-2.3.js
 
 //this is inteded to encapsulate logic around the card
 //it may be worth refactoring this code with Angular.js in the future to decouple

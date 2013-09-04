@@ -3,10 +3,8 @@
 
 
  	<!-- ko if: currentCard() -->
-	<div id="card">
-		<div id="content-title">
-			<em>Card Title</em>
-		</div>
+	<div id="card" data-bind="pep: currentCard">
+		<div id="content-title"></div>
 		<div id="content-wrapper">
 			<div id="card-content" data-bind="html: currentCard().excerpt"></div>
 		</div>
@@ -26,58 +24,208 @@
 		var self = this;
 		self.cardId = cardId;
 		self.excerpt = excerpt;
+		self.candidate = ko.observable("none");
+		self.vote = ko.observable("none");
 	};
 
-	var CardViewModel = function(data){
+	var VoteViewModel = function(data, nextPage){
 		var self = this;
-
+		//all cards
 		self.cards = ko.observableArray();
+		//the card in view
 		self.currentCard = ko.observable();
 
-		for(var i = 0; i < data.cards.length; i ++){
-			var cardData = data.cards[i];
-			var model = new CarModel(cardData.card_id, cardData.excerpt);
+		self.nextPage = nextPage;
 
-			self.cards.push(model);
-
-			if(i == 0){
-				self.currentCard(self.cards()[0]);
+		var mapDataToCards = function(data){
+			for(var i = data.cards.length - 1; i >= 0; i --){
+				var cardData = data.cards[i];
+				var model = new CarModel(cardData.card_id, cardData.excerpt);
+				//add the to the front of the array
+				self.cards.unshift(model);
 			}
+		};
+
+
+
+		self.currentCard().vote.subscribe(
+			function(vote){
+      	if(vote === "maybe" || vote === "yes" || vote === "no"){
+      		var data = {
+      			"vote" : {
+      				"card_id" : self.currentCard().cardId,
+      				"vote_type" : data
+      			}
+      		};
+
+      		var deferred = $.ajax(
+      			{
+      				'data' : data,
+      				'type' : 'POST',
+      				'url' : '<%= @new_votes_path() %>'
+      			}
+      		);
+
+      		deferred.done(function(data, textStatus, jqXHR) {
+						if(typeof data !== 'undefined' && typeof data.status != 'undefined'){
+							var successful = data.status === 'success';
+
+							if(successful && self.cards().length > 0){
+								self.currentCard(self.cards.shift());
+							}
+						}
+					});
+    		}
+    	}
+    );
+
+		//getting more cards
+		self.fetchMoreCards = function(){
+			if(self.nextPage){
+				var deferred = $.ajax(
+					'type' : 'GET',
+					'url' : nextPage
+				);
+
+				deferred.done(
+					function(data, textStatus, jqXHR) {
+						if(typeof data !== 'undefined' && typeof data.status != 'undefined'  && typeof data.result != 'undefined'){
+							var successful = data.status === 'success';
+							if(successful && data.result.cards){
+								mapDataToCards(data.results.cards);
+							}
+						}
+					}
+				);
+			}
+		};
+
+
+		(function(){
+			mapDataToCards(data);
+
+			if(self.cards().length > 0){
+				self.currentCard(self.cards.shift());
+			}
+			//try to get more cards every five seconds
+			window.setInterval(self.fetchMoreCards, 5 * 1000);
+		})();
+	};
+
+	ko.bindingHandlers.pep = {
+    init : function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext){
+      var $element = $(element);
+      var observableCard = valueAccessor();
+
+      var centerElement = function(){
+      	var width = $element.outerWidth();
+				var height = $element.outerHeight();
+
+				var parentWidth = $element.parent().width();
+				var parentHeight = $element.parent().height();
+
+				var top = (parentHeight - height)/2;
+				var left = (parentWidth - width)/2;
+
+				$element.css("left", left + "px");
+				$element.css("top", top + "px")
+      };
+
+      $element.pep(
+	      {
+					droppable: '.drop-target',
+					//smooths out animation
+	 	 			useCSSTranslation: false,
+					overlapFunction: function($a, $b){
+
+						var cardRect = $b[0].getBoundingClientRect();
+	    			var regionRect = $a[0].getBoundingClientRect();
+
+	    			var overlaps = false;
+
+	    			observableCard.candidate("none");
+
+	    			if($a.hasClass("top")){
+	    				overlaps = cardRect.top < regionRect.bottom;
+	    				if(overlaps){
+	    					observableCard.candidate("maybe");
+	    				}
+	    			} else if ($a.hasClass("left")){
+							overlaps = cardRect.left < regionRect.right;
+							if(overlaps){
+								observableCard.candidate("no");
+							}
+	    			} else if ($a.hasClass("left-bottom")){
+	    				//the card is going down, and the distance between the region's right edge
+	    				//and its left edge is more than 50% of the card's width
+
+	    				overlaps = cardRect.bottom > regionRect.bottom && (cardRect.left < regionRect.right) &&
+	    					(cardRect.right - regionRect.right) < (cardRect.width/ 2);
+
+	    				if(overlaps){
+	    					observableCard.candidate("no");
+	    				}
+	    			} else if ($a.hasClass("right-bottom") ){
+	    				//the card is going down, and the distance between the region's left edge
+	    				//and its right edge is more than 50% of the card's width
+
+	    				overlaps = cardRect.bottom > regionRect.bottom &&
+	    					(cardRect.right > regionRect.left) &&
+	    					cardRect.right - regionRect.left > (cardRect.width/ 2);
+
+	    				if(overlaps){
+	    					observableCard.candidate("yes");
+	    				}
+	    			} else if ($a.hasClass("right")){
+
+	    				overlaps = cardRect.right > regionRect.left;
+	    				if(overlaps){
+	    					observableCard.candidate("yes");
+	    				}
+	    			}
+	    			return overlaps;
+					},
+
+					start : function(ev, obj) {
+						//the card has started moving
+					},
+					stop : function(ev, obj) {
+						//the card has stopped moving,
+						//if its not moving back to the
+						if (obj.activeDropRegions.length == 0) {
+							//center the card
+							centerElement();
+							observableCard.candidate("none");
+						}
+					},
+					rest: function(ev, obj){
+						if(obj.activeDropRegions.length > 0){
+							observableCard.vote(observableCard.candidate());
+						}
+					}
+				}
+			);
+
+			//resize the parent
+			var resizeParent = function(){
+				var $parent = $element.parent();
+				$parent.height(window.innerHeight - $parent.position().top);
+			}
+
+			resizeParent();
+			//center element
+			centerElement();
+
+			$(window).resize(function(){
+				resizeParent();
+			});
 		}
 	};
 
-	{
-		init : function(data){
-			Cards.allCards = data;
-		},
-		fetch : function(){
-
-
-		},
-		setCurrentCard : function(){
-
-
-		},
-		submit : function(vote){
-
-			if(vote == "no" || vote == "yes"){
-				var data = {
-					"type" : vote,
-					"card_id" : Cards.current.card_id
-				};
-			}
-		}
-	};
-
-
-	$(document).ready(function() {
-
-		PitchCardView.init("nav", "#card", Cards.submit);
-
-		$(window).resize(function(){
-			PitchCardView.resizeParent();
-		});
-
+	$(document).ready(function(){
+		var data = <%=raw @all_frames.as_json.to_json%>;
+		var viewModel = new VoteViewModel(data);
+		ko.applyBindings(viewModel);
 	});
 	</script>
 <% end %>

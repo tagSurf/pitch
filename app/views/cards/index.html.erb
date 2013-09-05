@@ -1,9 +1,7 @@
 <div id="pitch">
 	<div class="drop-target top"></div>
-
-
  	<!-- ko if: currentCard() -->
-	<div id="card" data-bind="pep: currentCard">
+	<div id="card" data-bind="pep: currentCard().candidate, settle: currentCard().vote, css : currentCard().candidate " >
 		<div id="content-title"></div>
 		<div id="content-wrapper">
 			<div id="card-content" data-bind="html: currentCard().excerpt"></div>
@@ -26,6 +24,10 @@
 		self.excerpt = excerpt;
 		self.candidate = ko.observable("none");
 		self.vote = ko.observable("none");
+
+		self.candidate.subscribe(function(value){
+			console.log("Candidate is now " + value);
+		});
 	};
 
 	var VoteViewModel = function(data, nextPage){
@@ -58,8 +60,7 @@
 
 				deferred.done(
 					function(data, textStatus, jqXHR) {
-						debugger;
-						if(typeof data !== 'undefined' && typeof data.status != 'undefined'  && typeof data.result !== 'undefined'){
+						if(typeof data !== 'undefined' && typeof data.status != 'undefined' && typeof data.result !== 'undefined'){
 							var successful = data.status === 'success';
 							if(successful && data.result.cards){
 								mapDataToCards(data.result.cards);
@@ -116,9 +117,9 @@
 	ko.bindingHandlers.pep = {
     init : function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext){
       var $element = $(element);
-      debugger;
-      var observableCard = valueAccessor();
-      var card = observableCard();
+      var observable = valueAccessor();
+
+      var settle = allBindingsAccessor().settle;
 
       var centerElement = function(){
       	var width = $element.outerWidth();
@@ -146,27 +147,24 @@
 
 	    			var overlaps = false;
 
-	    			card.candidate("none");
-
 	    			if($a.hasClass("top")){
 	    				overlaps = cardRect.top < regionRect.bottom;
 	    				if(overlaps){
-	    					card.candidate("maybe");
+	    					observable("maybe");
 	    				}
 	    			} else if ($a.hasClass("left")){
 							overlaps = cardRect.left < regionRect.right;
 							if(overlaps){
-								card.candidate("no");
+								observable("no");
 							}
 	    			} else if ($a.hasClass("left-bottom")){
 	    				//the card is going down, and the distance between the region's right edge
 	    				//and its left edge is more than 50% of the card's width
-
 	    				overlaps = cardRect.bottom > regionRect.bottom && (cardRect.left < regionRect.right) &&
 	    					(cardRect.right - regionRect.right) < (cardRect.width/ 2);
 
 	    				if(overlaps){
-	    					card.candidate("no");
+	    					observable("no");
 	    				}
 	    			} else if ($a.hasClass("right-bottom") ){
 	    				//the card is going down, and the distance between the region's left edge
@@ -177,20 +175,24 @@
 	    					cardRect.right - regionRect.left > (cardRect.width/ 2);
 
 	    				if(overlaps){
-	    					card.candidate("yes");
+	    					observable("yes");
 	    				}
 	    			} else if ($a.hasClass("right")){
 
 	    				overlaps = cardRect.right > regionRect.left;
 	    				if(overlaps){
-	    					card.candidate("yes");
+	    					observable("yes");
 	    				}
 	    			}
 	    			return overlaps;
 					},
-
 					start : function(ev, obj) {
 						//the card has started moving
+					},
+					drag : function(ev, obj){
+						if(obj.activeDropRegions.length == 0) {
+							observable("none");
+						}
 					},
 					stop : function(ev, obj) {
 						//the card has stopped moving,
@@ -198,12 +200,12 @@
 						if (obj.activeDropRegions.length == 0) {
 							//center the card
 							centerElement();
-							card.candidate("none");
+							observable("none");
 						}
 					},
 					rest: function(ev, obj){
 						if(obj.activeDropRegions.length > 0){
-							card.vote(card.candidate());
+							//settle(observable());
 						}
 					}
 				}

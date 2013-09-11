@@ -4,7 +4,7 @@
 
 	<div class="drop-target top"></div>
  	<!-- ko if: currentCard() -->
-	<div id="card" data-bind="pep: currentCard, css:currentCard().candidate" >
+	<div id="card" data-bind="css:currentCard().candidate" >
 		<div id="content-title"></div>
 		<div id="content-wrapper">
 			<div id="card-content" data-bind="html: currentCard().excerpt"></div>
@@ -75,7 +75,8 @@
 
 								if(successful && self.cards().length > 0){
 									self.currentCard(self.cards.shift());
-									self.currentCard.valueHasMutated();
+									CardUI.unbind();
+									CardUI.init();
 								} else {
 									self.currentCard(null);
 								}
@@ -129,123 +130,123 @@
 		})();
 	};
 
-	ko.bindingHandlers.pep = {
-    init : function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext){
-      var $element = $(element);
-      var observable = valueAccessor()().candidate;
-      var settle = valueAccessor()().vote;
+	var CardUI = {
+		centerCard : function(){
+			var width = CardUI.$element.outerWidth();
+			var height = CardUI.$element.outerHeight();
 
-      var centerElement = function(){
-      	var width = $element.outerWidth();
-				var height = $element.outerHeight();
+			var parentWidth = CardUI.$element.parent().width();
+			var parentHeight = CardUI.$element.parent().height();
 
-				var parentWidth = $element.parent().width();
-				var parentHeight = $element.parent().height();
+			var top = (parentHeight - height)/2;
+			var left = (parentWidth - width)/2;
 
-				var top = (parentHeight - height)/2;
-				var left = (parentWidth - width)/2;
+			CardUI.$element.css("left", left + "px");
+			CardUI.$element.css("top", top + "px")
+		},
+		resizeParent : function(){
+			var $parent = CardUI.$element.parent();
+			$parent.height(window.innerHeight - $parent.position().top);
+		},
+		init : function(){
+		 	CardUI.$element = $("#card");
+      var observable = CardUI.viewModel.currentCard().candidate;
+      var settle = CardUI.viewModel.currentCard().vote;
 
-				$element.css("left", left + "px");
-				$element.css("top", top + "px")
-      };
+			CardUI.$element.pep({
+				droppable: '.drop-target',
+				//smooths out animation
+ 	 			useCSSTranslation: false,
+				overlapFunction: function($a, $b){
 
-      $element.pep(
-	      {
-					droppable: '.drop-target',
-					//smooths out animation
-	 	 			useCSSTranslation: false,
-					overlapFunction: function($a, $b){
+					var cardRect = $b[0].getBoundingClientRect();
+    			var regionRect = $a[0].getBoundingClientRect();
 
-						var cardRect = $b[0].getBoundingClientRect();
-	    			var regionRect = $a[0].getBoundingClientRect();
+    			var overlaps = false;
 
-	    			var overlaps = false;
-
-	    			if($a.hasClass("top")){
-	    				overlaps = cardRect.top < regionRect.bottom;
-	    				if(overlaps){
-	    					observable("maybe");
-	    				}
-	    			} else if ($a.hasClass("left")){
-							overlaps = cardRect.left < regionRect.right;
-							if(overlaps){
-								observable("no");
-							}
-	    			} else if ($a.hasClass("left-bottom")){
-	    				//the card is going down, and the distance between the region's right edge
-	    				//and its left edge is more than 50% of the card's width
-	    				overlaps = cardRect.bottom > regionRect.bottom && (cardRect.left < regionRect.right) &&
-	    					(cardRect.right - regionRect.right) < (cardRect.width/ 2);
-
-	    				if(overlaps){
-	    					observable("no");
-	    				}
-	    			} else if ($a.hasClass("right-bottom") ){
-	    				//the card is going down, and the distance between the region's left edge
-	    				//and its right edge is more than 50% of the card's width
-
-	    				overlaps = cardRect.bottom > regionRect.bottom &&
-	    					(cardRect.right > regionRect.left) &&
-	    					cardRect.right - regionRect.left > (cardRect.width/ 2);
-
-	    				if(overlaps){
-	    					observable("yes");
-	    				}
-	    			} else if ($a.hasClass("right")){
-
-	    				overlaps = cardRect.right > regionRect.left;
-	    				if(overlaps){
-	    					observable("yes");
-	    				}
-	    			}
-	    			return overlaps;
-					},
-					start : function(ev, obj) {
-						//the card has started moving
-					},
-					drag : function(ev, obj){
-						if(obj.activeDropRegions.length == 0) {
-							observable("none");
+    			if($a.hasClass("top")){
+    				overlaps = cardRect.top < regionRect.bottom;
+    				if(overlaps){
+    					observable("maybe");
+    				}
+    			} else if ($a.hasClass("left")){
+						overlaps = cardRect.left < regionRect.right;
+						if(overlaps){
+							observable("no");
 						}
-					},
-					stop : function(ev, obj) {
-						//the card has stopped moving,
-						//if its not moving back to the
-						if (obj.activeDropRegions.length == 0) {
-							//center the card
-							centerElement();
-							observable("none");
-						}
-					},
-					rest: function(ev, obj){
-						if(obj.activeDropRegions.length > 0){
-							settle(observable());
-						}
+    			} else if ($a.hasClass("left-bottom")){
+    				//the card is going down, and the distance between the region's right edge
+    				//and its left edge is more than 50% of the card's width
+    				overlaps = cardRect.bottom > regionRect.bottom && (cardRect.left < regionRect.right) &&
+    					(cardRect.right - regionRect.right) < (cardRect.width/ 2);
+
+    				if(overlaps){
+    					observable("no");
+    				}
+    			} else if ($a.hasClass("right-bottom") ){
+    				//the card is going down, and the distance between the region's left edge
+    				//and its right edge is more than 50% of the card's width
+
+    				overlaps = cardRect.bottom > regionRect.bottom &&
+    					(cardRect.right > regionRect.left) &&
+    					cardRect.right - regionRect.left > (cardRect.width/ 2);
+
+    				if(overlaps){
+    					observable("yes");
+    				}
+    			} else if ($a.hasClass("right")){
+
+    				overlaps = cardRect.right > regionRect.left;
+    				if(overlaps){
+    					observable("yes");
+    				}
+    			}
+    			return overlaps;
+				},
+				start : function(ev, obj) {
+					//the card has started moving
+				},
+				drag : function(ev, obj){
+					if(obj.activeDropRegions.length == 0) {
+						observable("none");
+					}
+				},
+				stop : function(ev, obj) {
+					//the card has stopped moving,
+					//if its not moving back to the
+					if (obj.activeDropRegions.length == 0) {
+						//center the card
+						centerElement();
+						observable("none");
+					}
+				},
+				rest: function(ev, obj){
+					if(obj.activeDropRegions.length > 0){
+						settle(observable());
 					}
 				}
-			);
+			});
 
-			//resize the parent
-			var resizeParent = function(){
-				var $parent = $element.parent();
-				$parent.height(window.innerHeight - $parent.position().top);
-			}
-
-			resizeParent();
+			CardUI.resizeParent();
 			//center element
-			centerElement();
+			CardUI.centerCard();
 
 			$(window).resize(function(){
-				resizeParent();
+				CardUI.resizeParent();
 			});
+		},
+		unbind : function(){
+			$.pep.unbind(CardUI.$element);
 		}
 	};
 
 	$(document).ready(function(){
 		var data = <%=raw @all_cards.as_json.to_json %>;
 		var nextPage =  '<%= cards_path(:format => "json")%>';
-		var viewModel = new VoteViewModel(data, nextPage);
-		ko.applyBindings(viewModel);
+
+		CardUI.viewModel = new VoteViewModel(data, nextPage);
+		ko.applyBindings(CardUI.viewModel);
+		CardUI.init();
 	});
 	</script>
 <% end %>

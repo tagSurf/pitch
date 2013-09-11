@@ -15,15 +15,6 @@
 //= require jquery.limiter.js
 //= require twitter/bootstrap
 //= require_tree .
-
-window.addEventListener('load', function () {
-    // Set a timeout...
-    setTimeout(function () {
-        // Hide the address bar!
-        window.scrollTo(0, 1);
-    }, 0);
-});
-
 Application = {
 	ajaxGet : function(url) {
 		Application.showProgress(true);
@@ -82,9 +73,11 @@ Application = {
 	},
 	showProgress : function(showProgress) {
 		if(showProgress){
-			$('.progress').show();
+			$('#progress').modal({
+				keyboard: false
+			});
 		} else {
-			$('.progress').hide();
+			$('#progress').modal('hide');
 		}
 	},
 	defaultOnComplete : function() {

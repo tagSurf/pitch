@@ -1,10 +1,26 @@
 <div id="pitch">
+	<div class="message alert alert-success" id="success-message" style="display:none; width:300px;margin-left:auto;margin-right:auto"></div>
+  <div class="message alert alert-danger" id="error-message"  style="display:none; width:300px;margin-left:auto;margin-right:auto"></div>
+
 	<div class="drop-target top"></div>
  	<!-- ko if: currentCard() -->
-	<div id="card" data-bind="pep: currentCard().candidate, settle: currentCard().vote, css : currentCard().candidate " >
+	<div id="card" data-bind="pep: currentCard, css:currentCard().candidate" >
 		<div id="content-title"></div>
 		<div id="content-wrapper">
 			<div id="card-content" data-bind="html: currentCard().excerpt"></div>
+		</div>
+	</div>
+	<!-- /ko -->
+	<!-- ko if: !currentCard() -->
+	<div class="panel panel-default" style="max-width:300px;margin:auto">
+  	<div class="panel-body">
+			<p>
+				Pitch is all building a community for innovators to easily share their ideas and get transparent, feedback quickly.
+			</p>
+			<p>
+				Help us grow that community by sharing your ideas.
+			</p>
+			<button class="btn btn-default btn-lg btn-block">Share</button>
 		</div>
 	</div>
 	<!-- /ko -->
@@ -32,94 +48,92 @@
 
 	var VoteViewModel = function(data, nextPage){
 		var self = this;
+		self.nextPage = nextPage;
 		//all cards
 		self.cards = ko.observableArray();
 		//the card in view
 		self.currentCard = ko.observable();
 
-		self.nextPage = nextPage;
+		self.currentCard.subscribe(function(card){
+			if(!card){ return; }
+
+			self.currentCard().vote.subscribe(
+				function(vote){
+	      	if(vote === 'maybe' || vote === 'yes' || vote === 'no'){
+	      		var postUrl = '<%= votes_path() %>';
+	      		var data = {
+	      			'vote' : {
+	      				'card_id' : self.currentCard().cardId,
+	      				'vote_type' : vote
+	      			}
+	      		};
+
+	      		var deferred = Application.ajaxPost(postUrl, data);
+	      		deferred.done(function(data, textStatus, jqXHR) {
+							if(typeof data !== 'undefined' && typeof data.status != 'undefined'){
+								var successful = data.status === 'success';
+
+								if(successful && self.cards().length > 0){
+									self.currentCard(self.cards.shift());
+									self.currentCard.valueHasMutated();
+								} else {
+									self.currentCard(null);
+								}
+							}
+						});
+	    		}
+	    	}
+		   );
+		});
 
 		var mapDataToCards = function(cardsData){
 			if( typeof cardsData === 'undefined' || !cardsData){ return; }
 
 			for(var i = cardsData.length - 1; i >= 0; i --){
 				var card = cardsData[i];
-				var model = new CardModel(card.card_id, card.excerpt);
-				//add the to the front of the array
-				self.cards.unshift(model);
+				if(!self.currentCard() || self.currentCard().cardId != card.id){
+					//don't reappend the card we're already viewing
+					var model = new CardModel(card.id, card.excerpt);
+					//add the to the front of the array so that we keep the order consistent
+					self.cards.unshift(model);
+				}
 			}
 		};
-
-		//getting more cards
-		self.fetchMoreCards = function(){
-			if(self.nextPage){
-				var deferred = $.ajax({
-					'type' : 'GET',
-					'url' : self.nextPage
-				});
-
-				deferred.done(
-					function(data, textStatus, jqXHR) {
-						if(typeof data !== 'undefined' && typeof data.status != 'undefined' && typeof data.result !== 'undefined'){
-							var successful = data.status === 'success';
-							if(successful && data.result.cards){
-								mapDataToCards(data.result.cards);
-							}
-						}
-					}
-				);
-			}
-		};
-
 
 		(function(){
 			mapDataToCards(data);
 
 			if(self.cards().length > 0){
 				self.currentCard(self.cards.shift());
-
-				self.currentCard().vote.subscribe(
-					function(vote){
-		      	if(vote === "maybe" || vote === "yes" || vote === "no"){
-		      		var data = {
-		      			"vote" : {
-		      				"card_id" : self.currentCard().cardId,
-		      				"vote_type" : data
-		      			}
-		      		};
-
-		      		var deferred = $.ajax(
-		      			{
-		      				'data' : data,
-		      				'type' : 'POST',
-		      				'url' : '<%= new_vote_path() %>'
-		      			}
-		      		);
-
-		      		deferred.done(function(data, textStatus, jqXHR) {
-								if(typeof data !== 'undefined' && typeof data.status != 'undefined'){
-									var successful = data.status === 'success';
-
-									if(successful && self.cards().length > 0){
-										self.currentCard(self.cards.shift());
-									}
-								}
-							});
-		    		}
-		    	}
-		    );
 			}
 			//try to get more cards every minute
-			window.setInterval(self.fetchMoreCards, 60 * 1000);
+			window.setInterval(function(){
+				if(self.nextPage){
+					var deferred = $.ajax({
+						'type' : 'GET',
+						'url' : self.nextPage
+					});
+
+					deferred.done(
+						function(data, textStatus, jqXHR) {
+							if(typeof data !== 'undefined' && typeof data.status != 'undefined' && typeof data.result !== 'undefined'){
+								var successful = data.status === 'success';
+								if(successful && data.result.cards){
+									mapDataToCards(data.result.cards);
+								}
+							}
+						}
+					);
+				}
+			}, 60 * 1000);
 		})();
 	};
 
 	ko.bindingHandlers.pep = {
     init : function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext){
       var $element = $(element);
-      var observable = valueAccessor();
-
-      var settle = allBindingsAccessor().settle;
+      var observable = valueAccessor()().candidate;
+      var settle = valueAccessor()().vote;
 
       var centerElement = function(){
       	var width = $element.outerWidth();
@@ -205,7 +219,7 @@
 					},
 					rest: function(ev, obj){
 						if(obj.activeDropRegions.length > 0){
-							//settle(observable());
+							settle(observable());
 						}
 					}
 				}

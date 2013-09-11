@@ -13,7 +13,7 @@
 //= require jquery
 //= require jquery.serialize-object.js
 //= require jquery.limiter.js
-//= require bootstrap
+//= require twitter/bootstrap
 //= require_tree .
 
 window.addEventListener('load', function () {
@@ -27,7 +27,6 @@ window.addEventListener('load', function () {
 Application = {
 	ajaxGet : function(url) {
 		Application.showProgress(true);
-
 		var request = $.ajax({
 			url : url,
 			type : 'GET'
@@ -114,7 +113,9 @@ Application = {
 			}, 1000 * 5);
 		} else {
 			$('#error-message').html(message).show();
-
+			setTimeout(function(){
+				$('#error-message').hide();
+			}, 1000 * 5);
 		}
 	},
 	init : function(){

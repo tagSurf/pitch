@@ -1,4 +1,6 @@
 class VotesController < ApplicationController
+  before_filter :authenticate_user!
+
   def create
     user = User.find(current_user.id)
     vote = user.votes.new(vote_params)
@@ -17,7 +19,9 @@ class VotesController < ApplicationController
       }
     end
   end
+
+  private
   def vote_params
-    params.require(:vote).permit(:card_id)
+    params.require(:vote).permit(:card_id,:vote_type)
   end
 end

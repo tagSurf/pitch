@@ -8,19 +8,15 @@ class CardsController < ApplicationController
     # - never show yes or no votes again
     # - never show the user's cards
     # - show maybe votes again, but always after new content
-    @all_cards = Card.where("cards.id in
-                                    (
-                                      SELECT t.id FROM
-                                      (
-                                        SELECT c.id
-                                        , CASE WHEN v.vote_type IS NOT NULL THEN -1 ELSE 1 END as priority
-                                        , c.created_at
-                                        FROM cards c
-                                        LEFT JOIN votes v ON c.id = v.card_id AND v.user_id = ?
-                                        WHERE (v.id IS NULL OR v.vote_type = 'maybe') and c.author_id <> ?
-                                      ) as t
-                                      ORDER BY t.priority DESC, t.created_at DESC
-                                    )", user.id, user.id).limit(100)
+
+    #get all votes by this user ordered by date
+    card_voted_on = Vote.where("user_id = ? AND vote_type in ('no', 'yes')", user.id).map {|v| v.card_id}
+    if card_voted_on.any?
+      @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, card_voted_on).order("created_at DESC").limit(100)
+    else
+      @all_cards = Card.where('author_id <> ?', user.id).order("created_at DESC").limit(100)
+    end
+
     respond_to do |format|
       format.html { render "index" }
       format.json { render :json => { :status => 'success', :result =>  { :cards => @all_cards } } }

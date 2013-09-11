@@ -11,10 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130903063831) do
+ActiveRecord::Schema.define(version: 20130905154749) do
 
   create_table "cards", force: true do |t|
-    t.string   "excerpt"
+    t.string   "excerpt",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "author_id",  null: false
@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 20130903063831) do
     t.integer  "card_id",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "vote_type"
+    t.string   "vote_type",  null: false
   end
 
   add_index "votes", ["card_id"], name: "fk_votes_cards", using: :btree

@@ -4,7 +4,11 @@
 
   <%= form_for(@card, :url => cards_path(@card), :class => "create-card") do |f| %>
     <div class="form-group">
-      <%= f.label :excerpt, "Tell us about your idea", :class => "control-label" %>
+      <%= f.label :title, "What is your idea called?", :class => "control-label" %>
+      <%= f.text_field :title, :class => "form-control", :id => "title" %>
+    </div>
+    <div class="form-group">
+      <%= f.label :excerpt, "Tell us a little about your idea", :class => "control-label" %>
       <span id="char-limit" class="label label-info pull-right"></span>
       <%= f.text_area :excerpt, :class => "form-control", :id => "excerpt", :style => "height:150px" %>
 

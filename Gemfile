@@ -5,14 +5,12 @@ gem 'rails', '4.0.0'
 gem 'sass-rails', '~> 4.0.0'
 #Twitter bootstrap
 gem 'bootstrap-sass', github: 'thomas-mcdonald/bootstrap-sass'
-gem 'bootstrap-glyphicons'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer'
 gem 'execjs'
-
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
@@ -25,20 +23,13 @@ gem 'mysql2'
 gem 'sqlite3'
 
 group :development do
-	gem "capistrano"
-  gem "rvm-capistrano"
-  gem "quiet_assets"
-  gem "debugger"
+	gem 'capistrano'
+  gem 'rvm-capistrano'
+  gem 'quiet_assets'
+  gem 'debugger'
 end
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
 end
-
-# Use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-

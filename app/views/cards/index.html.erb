@@ -141,8 +141,10 @@
 			var parentWidth = CardUI.$element.parent().innerWidth();
 			var parentHeight = CardUI.$element.parent().innerHeight();
 
-			var top = (parentHeight - height)/2;
-			var left = (parentWidth - width)/2;
+
+      var parentPadding = 10;
+			var top = (parentHeight - height)/2 + parentPadding;
+			var left = (parentWidth - width)/2 + parentPadding;
 
 			CardUI.$element.css("left", left + "px");
 			CardUI.$element.css("top", top + "px")

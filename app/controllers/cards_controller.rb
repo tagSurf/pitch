@@ -3,21 +3,18 @@ class CardsController < ApplicationController
 
   def index
     user = User.find(current_user.id)
-    #this is a naiive approach to get new cards to vote on:
-    #get the 100 most recent cards such that:
-    # - never show yes or no votes again
-    # - never show the user's cards
-    # - show maybe votes again, but always after new content
-
-    #get all votes by this user ordered by date
-
     if user.nil?
       return render_403
     end
-    debugger
     if user.is_admin
       @all_cards = Card.all
     else
+      #this is a naiive approach to get new cards to vote on:
+      #get the 100 most recent cards such that:
+      # - never show yes or no votes again
+      # - never show the user's cards
+      # - show maybe votes again, but always after new content
+      #get all votes by this user ordered by date
       previous_votes = Vote.where("user_id = ? AND vote_type in ('no', 'yes')", user.id).map {|v| v.card_id}
       if previous_votes.any?
         @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, previous_votes).order("created_at DESC").limit(100)

@@ -1,146 +1,213 @@
 //=require jquery.pep.min.js
 //=require knockout-2.3.js
 
-//this is inteded to encapsulate logic around the card
-//it may be worth refactoring this code with Angular.js in the future to decouple
-//the business logic from the UI.
+var CardModel = function(cardId, excerpt, title){
+        var self = this;
+        self.cardId = cardId;
+        self.excerpt = excerpt;
+        self.title = title;
+        self.candidate = ko.observable("none");
+        self.vote = ko.observable("none");
 
-var PitchCardView = {
-	centerCard : function (){
-		if(PitchCardView.data.$elem  !== "undefined"){
-			var $elem = PitchCardView.data.$elem;
+        self.candidate.subscribe(function(value){
+            console.log("Candidate is now " + value);
+        });
+    };
 
-			var width = $elem.outerWidth();
-			var height = $elem.outerHeight();
+var VoteViewModel = function(data, nextPage){
+    var self = this;
+    self.nextPage = nextPage;
+    //all cards
+    self.cards = ko.observableArray();
+    //the card in view
+    self.currentCard = ko.observable();
 
-			var parentWidth = $elem.parent().width();
-			var parentHeight = $elem.parent().height();
+    self.currentCard.subscribe(
+        function(card){
+            if(!card){ return; }
+            self.currentCard().vote.subscribe(
+                function(vote){
+                    if(vote === 'maybe' || vote === 'yes' || vote === 'no'){
+                        var postUrl = '<%= votes_path() %>';
+                        var data = {
+                            'vote' : {
+                                'card_id' : self.currentCard().cardId,
+                                'vote_type' : vote
+                            }
+                        };
 
-			var top = (parentHeight - height)/2;
-			var left = (parentWidth - width)/2;
+                        var deferred = Application.ajaxPost(postUrl, data);
+                        deferred.done(function(data, textStatus, jqXHR) {
+                                if(typeof data !== 'undefined' && typeof data.status != 'undefined'){
+                                    var successful = data.status === 'success';
 
-			$elem.css("left", left + "px");
-			$elem.css("top", top + "px")
-		}
-	},
-	init : function (nav, elem, submit) {
-		PitchCardView.data = {};
-		PitchCardView.data.$elem = $(elem);
-        PitchCardView.data.submit = submit;
-
-		PitchCardView.data.$elem.pep({
-			droppable: '.drop-target',
-			overlapFunction: function($a, $b){
-				var cardRect = $b[0].getBoundingClientRect();
-    			var regionRect = $a[0].getBoundingClientRect();
-
-    			displayMaybe = function(){
-    				$b.addClass("maybe");
-    				$b.removeClass("no");
-    				$b.removeClass("yes");
-    			};
-
-    			displayNo = function(){
-    				$b.removeClass("maybe");
-    				$b.addClass("no");
-    				$b.removeClass("yes");
-    			}
-
-    			displayYes = function(){
-    				$b.removeClass("maybe");
-    				$b.removeClass("no");
-    				$b.addClass("yes");
-    			}
-
-    			var overlaps = false;
-    			if($a.hasClass("top")){
-    				overlaps = cardRect.top < regionRect.bottom;
-    				if(overlaps){
-    					displayMaybe();
-    				}
-    			} else if ($a.hasClass("left")){
-					overlaps = cardRect.left < regionRect.right;
-					if(overlaps){
-						displayNo();
-					}
-    			} else if ($a.hasClass("left-bottom")){
-    				//the card is going down, and the distance between the region's right edge
-    				//and its left edge is more than 50% of the card's width
-
-    				overlaps = cardRect.bottom > regionRect.bottom &&
-    					(cardRect.left < regionRect.right) &&
-    					cardRect.right - regionRect.right < (cardRect.width/ 2);
-
-    				if(overlaps){
-    					displayNo();
-    				}
-    			} else if ($a.hasClass("right-bottom") ){
-    				//the card is going down, and the distance between the region's left edge
-    				//and its right edge is more than 50% of the card's width
-
-    				overlaps = cardRect.bottom > regionRect.bottom &&
-    					(cardRect.right > regionRect.left) &&
-    					cardRect.right - regionRect.left > (cardRect.width/ 2);
-
-    				if(overlaps){
-    					displayYes();
-    				}
-    			} else if ($a.hasClass("right")){
-
-    				overlaps = cardRect.right > regionRect.left;
-    				if(overlaps){
-    					displayYes();
-    				}
-    			}
-    			return overlaps;
-			},
- 	 		//smooths out animation
- 	 		useCSSTranslation: false,
-			start : function(ev, obj) {
-				//the card has started moving
-			},
-			stop : function(ev, obj) {
-				//the card has stopped moving,
-				//if its not moving back to the
-				if (obj.activeDropRegions.length == 0) {
-					//center the card
-					PitchCardView.centerCard();
-					PitchCardView.data.$elem.removeClass("maybe").removeClass("no").removeClass("yes");
-				}
-			},
-			rest: function(ev, obj) {
-				//the card has come to rest
-				if(obj.activeDropRegions.length > 0){
-					Pitch.submit(obj.activeDropRegions);
-				}
-			},
-			drag: function(ev, obj) {
-			}
-		});
-		PitchCardView.resizeParent();
-	},
-	submit : function(intersections){
-        var no = PitchCardView.data.$elem.hasClass("no");
-        var yes = PitchCardView.data.$elem.hasClass("yes");
-        var maybe = PitchCardView.data.$elem.hasClass("maybe");
-
-        var vote;
-        if(no){
-            vote = "no";
-        } else if(yes){
-            vote = "yes";
-        } else {
-            vote = "maybe";
+                                    if(successful && self.cards().length > 0){
+                                        self.currentCard(self.cards.shift());
+                                        CardUI.unbind();
+                                        CardUI.init();
+                                    } else {
+                                        self.currentCard(null);
+                                    }
+                                }
+                        });
+                    }
+                }
+            );
         }
+    );
 
-        PitchCardView.data.submit(vote);
-	},
-	resizeParent : function() {
-		if(PitchCardView.data.$elem  !== "undefined"){
-			var $parent = PitchCardView.data.$elem.parent();
-			$parent.height(window.innerHeight - $parent.position().top);
-			PitchCardView.centerCard();
-		}
-	},
+    var mapDataToCards = function(cardsData){
+        if( typeof cardsData === 'undefined' || !cardsData){ return; }
+
+        for(var i = cardsData.length - 1; i >= 0; i --){
+            var card = cardsData[i];
+            if(!self.currentCard() || self.currentCard().cardId != card.id){
+                //don't reappend the card we're already viewing
+                var model = new CardModel(card.id, card.excerpt, card.title);
+                //add the to the front of the array so that we keep the order consistent
+                self.cards.unshift(model);
+            }
+        }
+    };
+
+    (function(){
+        mapDataToCards(data);
+
+        if(self.cards().length > 0){
+            self.currentCard(self.cards.shift());
+        }
+        //try to get more cards every minute
+        window.setInterval(
+            function(){
+                if(self.nextPage){
+                    var deferred = $.ajax({
+                        'type' : 'GET',
+                        'url' : self.nextPage
+                    });
+
+                    deferred.done(
+                        function(data, textStatus, jqXHR) {
+                            if(typeof data !== 'undefined' && typeof data.status != 'undefined' && typeof data.result !== 'undefined'){
+                                var successful = data.status === 'success';
+                                if(successful && data.result.cards){
+                                    mapDataToCards(data.result.cards);
+                                }
+                            }
+                        }
+                    );
+                }
+            },
+        60 * 1000);
+    })();
 };
 
+var CardUI = {
+    centerCard : function(){
+        var width = CardUI.$element.outerWidth();
+        var height = CardUI.$element.outerHeight();
+
+        var parentWidth = CardUI.$element.parent().innerWidth();
+        var parentHeight = CardUI.$element.parent().innerHeight();
+
+
+  var parentPadding = 10;
+        var top = (parentHeight - height)/2 + parentPadding;
+        var left = (parentWidth - width)/2 + parentPadding;
+
+        CardUI.$element.css("left", left + "px");
+        CardUI.$element.css("top", top + "px")
+    },
+    resizeParent : function(){
+        var $parent = CardUI.$element.parent();
+        $parent.height(window.innerHeight - $parent.position().top);
+        CardUI.centerCard();
+    },
+    init : function(){
+        CardUI.$element = $("#card");
+  var observable = CardUI.viewModel.currentCard().candidate;
+  var settle = CardUI.viewModel.currentCard().vote;
+
+        CardUI.$element.pep({
+            droppable: '.drop-target',
+            //smooths out animation
+            useCSSTranslation: false,
+            overlapFunction: function($a, $b){
+
+                var cardRect = $b[0].getBoundingClientRect();
+            var regionRect = $a[0].getBoundingClientRect();
+
+            var overlaps = false;
+
+            if($a.hasClass("top")){
+                overlaps = cardRect.top < regionRect.bottom;
+                if(overlaps){
+                    observable("maybe");
+                }
+            } else if ($a.hasClass("left")){
+                    overlaps = cardRect.left < regionRect.right;
+                    if(overlaps){
+                        observable("no");
+                    }
+            } else if ($a.hasClass("left-bottom")){
+                //the card is going down, and the distance between the region's right edge
+                //and its left edge is more than 50% of the card's width
+                overlaps = cardRect.bottom > regionRect.bottom && (cardRect.left < regionRect.right) &&
+                    (cardRect.right - regionRect.right) < (cardRect.width/ 2);
+
+                if(overlaps){
+                    observable("no");
+                }
+            } else if ($a.hasClass("right-bottom") ){
+                //the card is going down, and the distance between the region's left edge
+                //and its right edge is more than 50% of the card's width
+
+                overlaps = cardRect.bottom > regionRect.bottom &&
+                    (cardRect.right > regionRect.left) &&
+                    cardRect.right - regionRect.left > (cardRect.width/ 2);
+
+                if(overlaps){
+                    observable("yes");
+                }
+            } else if ($a.hasClass("right")){
+
+                overlaps = cardRect.right > regionRect.left;
+                if(overlaps){
+                    observable("yes");
+                }
+            }
+            return overlaps;
+            },
+            start : function(ev, obj) {
+                //the card has started moving
+            },
+            drag : function(ev, obj){
+                if(obj.activeDropRegions.length == 0) {
+                    observable("none");
+                }
+            },
+            stop : function(ev, obj) {
+                //the card has stopped moving,
+                //if its not moving back to the
+                if (obj.activeDropRegions.length == 0) {
+                    //center the card
+                    CardUI.centerCard();
+                    observable("none");
+                }
+            },
+            rest: function(ev, obj){
+                if(obj.activeDropRegions.length > 0){
+                    settle(observable());
+                }
+            }
+        });
+
+        CardUI.resizeParent();
+
+        $(window).resize(function(){
+            CardUI.resizeParent();
+        });
+    },
+    unbind : function(){
+        $.pep.unbind(CardUI.$element);
+    }
+};

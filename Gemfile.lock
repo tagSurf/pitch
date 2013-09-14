@@ -35,9 +35,6 @@ GEM
     arel (4.0.0)
     atomic (1.1.10)
     bcrypt-ruby (3.1.1)
-    bootstrap-glyphicons (0.0.1)
-      railties (>= 3.0)
-      sass (>= 3.2)
     builder (3.1.4)
     capistrano (2.15.5)
       highline
@@ -159,7 +156,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bootstrap-glyphicons
   bootstrap-sass!
   capistrano
   debugger

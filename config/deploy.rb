@@ -1,4 +1,4 @@
-require "bundler/capistrano" 
+require "bundler/capistrano"
 require "rvm/capistrano"
 
 set :application, "pitch"
@@ -32,8 +32,6 @@ after "deploy:restart", "deploy:cleanup"
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
-
-# If you are using Passenger mod_rails uncomment this:
 namespace :db do
   task :db_config, :except => { :no_release => true }, :role => :app do
     run "cp -f ~/database.yml #{release_path}/config/database.yml"
@@ -45,7 +43,7 @@ after "deploy:finalize_update", "db:db_config"
 namespace :deploy do
   task :start do ; end
   task :stop do ; end
-  
+
   task :restart, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
   end

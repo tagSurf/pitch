@@ -10,11 +10,20 @@ class CardsController < ApplicationController
     # - show maybe votes again, but always after new content
 
     #get all votes by this user ordered by date
-    card_voted_on = Vote.where("user_id = ? AND vote_type in ('no', 'yes')", user.id).map {|v| v.card_id}
-    if card_voted_on.any?
-      @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, card_voted_on).order("created_at DESC").limit(100)
+
+    if user.nil?
+      return render_403
+    end
+    debugger
+    if user.is_admin
+      @all_cards = Card.all
     else
-      @all_cards = Card.where('author_id <> ?', user.id).order("created_at DESC").limit(100)
+      previous_votes = Vote.where("user_id = ? AND vote_type in ('no', 'yes')", user.id).map {|v| v.card_id}
+      if previous_votes.any?
+        @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, previous_votes).order("created_at DESC").limit(100)
+      else
+        @all_cards = Card.where('author_id <> ?', user.id).order("created_at DESC").limit(100)
+      end
     end
 
     respond_to do |format|

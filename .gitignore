@@ -6,6 +6,7 @@
 
 .DS_Store
 
+public/
 
 # Ignore bundler config.
 /.bundle

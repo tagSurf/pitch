@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pitch</title>
+  <title>TagPitch</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <%= stylesheet_link_tag "application", media: "all" %>
@@ -10,11 +10,17 @@
 <body>
   <div id="viewport">
     <div id="nav-bar-wrapper">
-      <div class="center">
-        <h1 style="display:inline"><a href="<%=cards_path()%>">TagPitch</a></h1>
-        <button type="button" class="btn btn-default btn-xs pull-right" onclick="location.href='<%= new_card_path() %>';">
-          <span class="glyphicon glyphicon-plus"></span>
-        </button>
+      <div class="center row">
+        <div class="col-xs-3">
+        </div>
+        <div class="col-xs-6">
+          <a id="nav-title" href="<%=cards_path()%>">TagPitch</a>
+        </div>
+        <div class="col-xs-3" style="padding-top:5px">
+          <button  type="button" class="btn btn-default btn-xs pull-right" onclick="location.href='<%= new_card_path() %>';">
+            <span class="glyphicon glyphicon-plus"></span>
+          </button>
+        </div>
       </div>
     </div>
     <div id="content">

@@ -9,25 +9,16 @@
 		margin-left: auto;
 		margin-right:auto;
 		width:300px;
-		padding: 5px 0px;
-		position:relative;
 		height:40px;
 	}
 
-	h1{
+	#nav-title{
 		color:#F4F7D9;
 		font-size:2em;
 		text-align:center;
-		width:100px;
-		position:absolute;
-		left:110px;
-		top:0;
 		padding:0;
 		margin:0;
-
-		a{
-			text-decoration:none;
-			color:#F4F7D9 !important;
-		}
+		text-decoration:none;
+		color:#F4F7D9 !important;
 	}
 }

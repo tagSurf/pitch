@@ -13,7 +13,7 @@
  *= require_tree
  */
 
-@import "twitter/bootstrap";
+@import "bootstrap";
 @import "bootstrap/glyphicons";
 
 html,body {
@@ -47,3 +47,20 @@ body{
 .input-errors{
 	color:#b94a48;
 }
+
+/* override twitter bootstrap  */
+
+.form-control{
+	font-size: 16px;
+	height: auto;
+	padding: 10px;
+}
+
+.modal-open{
+    margin:0px !important;
+}
+
+.modal-dialog{
+    padding:0px !important;
+}
+

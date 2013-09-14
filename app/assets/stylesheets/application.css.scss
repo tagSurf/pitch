@@ -11,11 +11,12 @@
 
  *= require_self
  *= require_tree
- *= require twitter/bootstrap
- *= require 'bootstrap/glyphicons'
  */
 
-html,body{
+@import "twitter/bootstrap";
+@import "bootstrap/glyphicons";
+
+html,body {
 	margin:0;
 	padding:0;
 }

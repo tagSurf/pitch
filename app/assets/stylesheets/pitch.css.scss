@@ -1,4 +1,4 @@
-@import "twitter/bootstrap/_mixins";
+@import "bootstrap/_mixins";
 
 #pitch {
 	-webkit-transition: translate3d(0,0,0);
@@ -43,11 +43,11 @@
 	#card {
 		width:75%;
 		max-width:240px;
-		
+
 		z-index:10;
 		background:#FFF;
 
-		-webkit-box-shadow: 0 10px 10px rgba(0,0,0, 0.7);   
+		-webkit-box-shadow: 0 10px 10px rgba(0,0,0, 0.7);
 	  	-moz-box-shadow: 0 10px 10px rgba(0, 0, 0, 0.7);
 	  	box-shadow: 0 10px 10px rgba(0, 0, 0, 0.7);
 

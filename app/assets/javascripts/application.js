@@ -63,7 +63,7 @@ Application = {
 						if($input){
 							$input.closest('.form-group').addClass('has-error');
 							//an array of errors
-							$input.before('<ul class="input-errors"><li>'+value.join('</li><li>')+'</li></p>')
+							$input.before('<ul class="input-errors"><li>'+value.join('</li><li>')+'</li></ul>')
 						}
 					});
 				}

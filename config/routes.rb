@@ -3,7 +3,7 @@ Pitch::Application.routes.draw do
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
-  devise_for :users, :controllers => {:sessions => 'sessions', :registrations => 'registrations'}
+  devise_for :users, :controllers => {:sessions => 'sessions', :registrations => 'registrations', :passwords => 'passwords'}
 
   resources :cards
   resources :votes

@@ -15,7 +15,7 @@ class VotesController < ApplicationController
       }
     else
       render :json => { :status => 'error',
-        :result =>  { :message => 'Oops! Could not save you voter. Please try again later.'}
+        :result =>  { :message => 'Oops! Could not save your vote. Please try again later.'}
       }
     end
   end

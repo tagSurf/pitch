@@ -11,15 +11,22 @@
   <div id="viewport">
     <div id="nav-bar-wrapper">
       <div class="center row">
-        <div class="col-xs-3">
+        <div class="col-xs-3" style="padding-top:10px">
+           <% if user_signed_in? %>
+            <a class="link-icon" href="<%= destroy_user_session_path%>">
+              <span class="glyphicon glyphicon-user"></span>
+            </a>
+          <% end %>
         </div>
         <div class="col-xs-6">
           <a id="nav-title" href="<%=cards_path()%>">TagPitch</a>
         </div>
-        <div class="col-xs-3" style="padding-top:5px">
-          <button  type="button" class="btn btn-default btn-xs pull-right" onclick="location.href='<%= new_card_path() %>';">
+        <div class="col-xs-3" style="padding-top:10px">
+          <% if user_signed_in? %>
+          <a class="link-icon" href="<%= new_card_path() %>">
             <span class="glyphicon glyphicon-plus"></span>
-          </button>
+          </a>
+          <% end %>
         </div>
       </div>
     </div>

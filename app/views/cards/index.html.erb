@@ -76,12 +76,41 @@
 							if(typeof data !== 'undefined' && typeof data.status != 'undefined'){
 								var successful = data.status === 'success';
 
-								if(successful && self.cards().length > 0){
-									self.currentCard(self.cards.shift());
-									CardUI.unbind();
-									CardUI.init();
-								} else {
-									self.currentCard(null);
+								if(successful){
+									if(self.cards().length > 0){
+
+										self.currentCard(self.cards.shift());
+										CardUI.unbind();
+										CardUI.init();
+
+									} else {
+
+										//see if there are anymore cards that can be voted on
+
+										if(self.nextPage){
+											var deferred = $.ajax({
+												'type' : 'GET',
+												'url' : self.nextPage
+											});
+
+											deferred.done(
+												function(data, textStatus, jqXHR) {
+													if(typeof data !== 'undefined' &&
+															typeof data.status != 'undefined' &&
+															typeof data.result !== 'undefined' ){
+														var successful = data.status === 'success';
+														if(successful && data.result.cards && data.result.cards > 0){
+															mapDataToCards(data.result.cards);
+														} else {
+															self.currentCard(null);
+														}
+													} else {
+														self.currentCard(null);
+													}
+												}
+											);
+										}
+									}
 								}
 							}
 						});
@@ -106,30 +135,9 @@
 
 		(function(){
 			mapDataToCards(data);
-
 			if(self.cards().length > 0){
 				self.currentCard(self.cards.shift());
 			}
-			//try to get more cards every minute
-			window.setInterval(function(){
-				if(self.nextPage){
-					var deferred = $.ajax({
-						'type' : 'GET',
-						'url' : self.nextPage
-					});
-
-					deferred.done(
-						function(data, textStatus, jqXHR) {
-							if(typeof data !== 'undefined' && typeof data.status != 'undefined' && typeof data.result !== 'undefined'){
-								var successful = data.status === 'success';
-								if(successful && data.result.cards){
-									mapDataToCards(data.result.cards);
-								}
-							}
-						}
-					);
-				}
-			}, 60 * 1000);
 		})();
 	};
 

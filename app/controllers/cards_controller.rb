@@ -10,16 +10,16 @@ class CardsController < ApplicationController
       @all_cards = Card.all
     else
       #this is a naiive approach to get new cards to vote on:
-      #get the 100 most recent cards such that:
+      #get the next 20 cards such that:
       # - never show yes or no votes again
       # - never show the user's cards
       # - show maybe votes again, but always after new content
       #get all votes by this user ordered by date
       previous_votes = Vote.where("user_id = ? AND vote_type in ('no', 'yes')", user.id).map {|v| v.card_id}
       if previous_votes.any?
-        @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, previous_votes).order("created_at DESC").limit(100)
+        @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, previous_votes).order("created_at DESC").limit(20)
       else
-        @all_cards = Card.where('author_id <> ?', user.id).order("created_at DESC").limit(100)
+        @all_cards = Card.where('author_id <> ?', user.id).order("created_at DESC").limit(20)
       end
     end
 

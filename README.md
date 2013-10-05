@@ -23,7 +23,7 @@ Ruby Version Manager allows you to manage multiple version of Ruby.
 $ \curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled # Or, --ruby=1.9.3
 ```
 
-Make RVM available to shell by pasting following line in
+Make RVM available to shell by pasting following line in your ~/.bash_profile file
 
 ```bash
 ~/.bash_profile [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" #
@@ -79,3 +79,10 @@ Host pitch-web
     IdentityFile "/Users/jared/keys/PitchWest"
 ```
 
+# Deploying Everything Through Capistrano
+
+You need to have your .ssh/config settings setup, as well as your local Rails environment.
+
+```bash
+cap deploy
+```

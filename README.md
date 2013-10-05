@@ -26,7 +26,7 @@ $ \curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled # Or, 
 Make RVM available to shell by pasting following line in your ~/.bash_profile file
 
 ```bash
-~/.bash_profile [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" #
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" #
 ```
 
 This loads RVM into a shell session.

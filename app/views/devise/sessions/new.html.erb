@@ -3,7 +3,7 @@
 	<div class="message alert alert-danger" id="error-message"  style="display:none"></div>
 	<%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :class => "sign-in") do |f| %>
 	  <%= f.email_field :email, :autofocus => true, :class => "form-control", :placeholder => "Email Address" %>
-	 	<%= f.password_field :password, :class => "form-control", :placeholder => "Password" %>
+	 	<%= f.password_field :password, :id=>:password, :class => "form-control", :placeholder => "Password" %>
 
 	  <% if devise_mapping.rememberable? -%>
 	    <label class="checkbox">
@@ -18,7 +18,18 @@
 <% content_for :script do %>
 	<script type="text/javascript">
 		$(document).ready(function(){
-				$('form').submit(Application.ajaxFormSubmit);
+				$('form').submit(function(){
+
+					var $form = $(this);
+					var deferred = Application.ajaxFormSubmit($form);
+
+					deferred.done(function(){
+						$('#password').val('');
+					});
+
+					return false;
+				});
+
 			}
 		);
 	</script>

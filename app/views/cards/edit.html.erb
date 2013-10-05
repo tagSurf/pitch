@@ -20,6 +20,12 @@
 <% content_for :script do %>
   <script type="text/javascript">
     $(document).ready(function(){
+
+        var setupCharacterLimit = function(){
+          var $charLimit = $('#char-limit');
+          $("#excerpt").limiter(140, $charLimit);
+        }
+
         $('form').submit(function(){
 
           var $form = $(this);
@@ -28,12 +34,12 @@
           submitDeferred.done(function(){
             $('#title').val('');
             $('#excerpt').val('');
+            setupCharacterLimit();
           });
           return false;
         });
 
-        var $charLimit = $('#char-limit');
-        $("#excerpt").limiter(140, $charLimit);
+        setupCharacterLimit();
       }
     );
   </script>

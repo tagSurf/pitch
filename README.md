@@ -44,13 +44,24 @@ $ rvm --default use 1.9.3
 
 # Run the site locally
 
-To run the site, you need to first clone this repo. Then in that directory run `bundle install`; this installs all of the gems you need. You'll also want to install and run MySQL locally:
+You'll also want to install and run MySQL locally:
 
 ```sql
-cd /user/local
+cd /usr/local
 brew versions mysql
 git checkout ed829a3 Library/Formula/mysql.rb
 brew install mysql
+```
+
+To run the site, you need to first clone this repo.
+
+Then in that directory run `bundle install`; this installs all of the gems you need.
+
+Create the database and run migrations locally:
+
+```bash
+rake db:create
+rake db:migrate
 ```
 
 # Deleting Cards

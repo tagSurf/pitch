@@ -8,7 +8,7 @@
       <%= f.email_field :email, :autofocus => true, :class => "form-control", :id => "email" %>
     </div>
     <div class="form-group">
-      <%= f.label :password, :class => "control-label" %>  
+      <%= f.label :password, :class => "control-label" %>
       <%= f.password_field :password, :class => "form-control", :id => "password" %>
     </div>
     <div class="form-group">
@@ -23,7 +23,15 @@
 <% content_for :script do %>
   <script type="text/javascript">
     $(document).ready(function(){
-        $('form').submit(Application.ajaxFormSubmit);
+
+        $('form').submit(function(){
+          var $form = $(this);
+          var deferred = Application.ajaxFormSubmit($form);
+
+          deferred.done(function(){
+            $('#password').val('');
+          });
+        });
       }
     );
   </script>

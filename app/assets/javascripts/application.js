@@ -40,9 +40,7 @@ Application = {
 		request.fail(Application.defaultOnError);
 		return request;
 	},
-	ajaxFormSubmit : function(){
-		var $form = $(this);
-
+	ajaxFormSubmit : function($form){
 		$form.find('.form-group').removeClass('has-error');
 		$form.find('ul.input-errors').remove();
 
@@ -69,7 +67,7 @@ Application = {
 				}
 			}
 		});
-		return false;
+		return request;
 	},
 	showProgress : function(showProgress) {
 		if(showProgress){

@@ -20,7 +20,17 @@
 <% content_for :script do %>
   <script type="text/javascript">
     $(document).ready(function(){
-        $('form').submit(Application.ajaxFormSubmit);
+        $('form').submit(function(){
+
+          var $form = $(this);
+          var submitDeferred =  Application.ajaxFormSubmit($form);
+
+          submitDeferred.done(function(){
+            $('#title').val('');
+            $('#excerpt').val('');
+          });
+          return false;
+        });
 
         var $charLimit = $('#char-limit');
         $("#excerpt").limiter(140, $charLimit);

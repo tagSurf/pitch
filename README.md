@@ -44,11 +44,29 @@ $ rvm --default use 1.9.3
 
 # Run the site locally
 
-
 To run the site, you need to first clone this repo. Then in that directory run `bundle install`; this installs all of the gems you need. You'll also want to install and run MySQL locally:
 
+```sql
+cd /user/local
+brew versions mysql
+git checkout ed829a3 Library/Formula/mysql.rb
+brew install mysql
+```
 
+# Deleting Cards
 
+Connect to the production database:
+
+```sql
+-- the name of the database
+use deck;
+
+-- do this first
+DELETE FROM votes WHERE card_id in ( some list of card ids );
+
+-- do this next
+DELETE FROM card WHERE id in ( some list of card ids );
+```
 
 # Server Access
 

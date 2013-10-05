@@ -16,7 +16,14 @@
 <% content_for :script do %>
   <script type="text/javascript">
     $(document).ready(function(){
-        $('form').submit(Application.ajaxFormSubmit);
+        $('form').submit(function(){
+          var $form = $(this);
+          var deferred = Application.ajaxFormSubmit($form);
+
+          deferred.done(function(){
+            $('#email').val('');
+          });
+        });
       }
     );
   </script>

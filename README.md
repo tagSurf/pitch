@@ -9,6 +9,12 @@ In the terminal run the following command:
 ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 ```
 
+## Setup GitHub SSH Keys
+
+Follow the instructions here, to create an public and private key for accessing GitHub: https://help.github.com/articles/generating-ssh-keys
+
+Make sure that you add the key to SSH after you have created it: `ssh-add ~/.ssh/id_rsa`
+
 ## Xcode Command Line Tools
 
 To build ruby from source, you'll want to get the command line tools. Install Xcode for compiling from https://developer.apple.com/downloads/ , after installation is done, run `$ xcodebuild -license`
@@ -20,10 +26,10 @@ Open Xcode -> Preferences -> Install Command Line Tools
 Ruby Version Manager allows you to manage multiple version of Ruby.
 
 ```bash
-$ \curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled # Or, --ruby=1.9.3
+\curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled # Or, --ruby=1.9.3
 ```
 
-Make RVM available to shell by pasting following line in your ~/.bash_profile file
+Make RVM available to shell by pasting following line in your ~/.bash_profile file.
 
 ```bash
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" #
@@ -31,15 +37,15 @@ Make RVM available to shell by pasting following line in your ~/.bash_profile fi
 
 This loads RVM into a shell session.
 
-Restart your terminal, type `$ rvm`
+Restart your terminal, type `rvm`
 
-See available ruby versions `$ rvm list known`
+See available ruby versions `rvm list known`
 
 ```bash
-Install ruby 1.9.3
-$ rvm install 1.9.3
-$ rvm use 1.9.3
-$ rvm --default use 1.9.3
+#Install ruby 1.9.3
+rvm install 1.9.3
+rvm use 1.9.3
+rvm --default use 1.9.3
 ```
 
 # Run the site locally
@@ -60,7 +66,13 @@ Then in that directory run `bundle install`; this installs all of the gems you n
 Create the database and run migrations locally:
 
 ```bash
+# run this once to create the databases
 rake db:create
+
+# seed the database after its been created
+rake db:seed
+
+# run this every time you pull or make changes to database schema
 rake db:migrate
 ```
 
@@ -92,8 +104,16 @@ Host pitch-web
 
 # Deploying Everything Through Capistrano
 
-You need to have your .ssh/config settings setup, as well as your local Rails environment.
+You need to have your ~/.ssh/config settings and as well as your local Rails environment ready to go for this.
+
+In the project directory, deploy code changes. This will deploy the site based on what's in master on GitHub, so if you made local changes you need to `git push` them first.
 
 ```bash
 cap deploy
+```
+
+If you want to deploy database changes:
+
+```bash
+cap deploy:migrate
 ```

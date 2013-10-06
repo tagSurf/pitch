@@ -59,7 +59,11 @@ git checkout ed829a3 Library/Formula/mysql.rb
 brew install mysql
 ```
 
-To run the site, you need to first clone this repo.
+Make sure you all of the commands that brew tells you to get the MySql service running on your machine after your install has completed.
+
+To run the site, you need to first clone **this repo**: `git clone git@github.com:tagpitch/pitch.git`. This will create directory called *pitch* in the current directory you are in the terminal. You can check your current directory by running `pwd` can change directories with `cd`.
+
+Once you clone the repo, go into that directory with `cd pitch`.
 
 Then in that directory run `bundle install`; this installs all of the gems you need.
 

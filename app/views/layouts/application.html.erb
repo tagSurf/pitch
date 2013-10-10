@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TagPitch</title>
+  <title>tagPitch</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <%= stylesheet_link_tag "application", media: "all" %>
@@ -11,17 +11,17 @@
   <div id="viewport">
     <div id="nav-bar-wrapper">
       <div class="center row">
-        <div class="col-xs-3" style="padding-top:10px">
+        <div class="col-xs-3" style="padding-top:5px">
            <% if user_signed_in? %>
             <a class="link-icon" href="<%= destroy_user_session_path%>">
-              <span class="glyphicon glyphicon-user"></span>
+              <span class="glyphicon glyphicon-log-out"></span>
             </a>
           <% end %>
         </div>
         <div class="col-xs-6">
           <a id="nav-title" href="<%=cards_path()%>">tagPitch</a>
         </div>
-        <div class="col-xs-3" style="padding-top:10px">
+        <div class="col-xs-3" style="padding-top:5px">
           <% if user_signed_in? %>
           <a class="link-icon" href="<%= new_card_path() %>">
             <span class="glyphicon glyphicon-plus"></span>

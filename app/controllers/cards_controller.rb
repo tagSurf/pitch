@@ -19,7 +19,14 @@ class CardsController < ApplicationController
       if previous_votes.any?
         @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, previous_votes).order("created_at DESC").limit(20)
       else
-        @all_cards = Card.where('author_id <> ?', user.id).order("created_at DESC").limit(20)
+        maybe_votes = Vote.where("user_id = ? AND vote_type = 'maybe'", user.id).map{|v| v.card_id}
+        @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, maybe_votes).order("created_at DESC").limit(20)
+
+        if @all_cards.length < 20
+          #only include maybe votes if we don't have 20 cards votes
+          maybe_cards = Card.where('id in (?)', maybe_votes).order("created_at DESC").limit(20 - @all_cards.length)
+          @all_cards = @all_cards + maybe_cards
+        end
       end
     end
 

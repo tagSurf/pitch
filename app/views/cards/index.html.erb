@@ -80,6 +80,7 @@
 									if(self.cards().length > 0){
 
 										self.currentCard(self.cards.shift());
+										//this reinitializes the jquery pep plugin
 										CardUI.unbind();
 										CardUI.init();
 
@@ -101,6 +102,9 @@
 
 														if(successful && data.result.cards && data.result.cards.length > 0){
 															mapDataToCards(data.result.cards);
+															//this reinitializes the jquery pep plugin
+															CardUI.unbind();
+															CardUI.init();
 														} else {
 															self.currentCard(null);
 														}
@@ -131,13 +135,15 @@
 					self.cards.unshift(model);
 				}
 			}
+
+			if(self.cards().length > 0){
+				self.currentCard(self.cards.shift());
+			}
 		};
 
 		(function(){
 			mapDataToCards(data);
-			if(self.cards().length > 0){
-				self.currentCard(self.cards.shift());
-			}
+
 		})();
 	};
 

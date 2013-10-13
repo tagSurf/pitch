@@ -3,7 +3,6 @@ class PasswordsController < Devise::PasswordsController
   #response code. Pretty much a copy of the devise controller's methods with exception of how the response is constructed.
 
   def create
-    params["reply_to"] = "paul@tagpitch.com"
     self.resource = resource_class.send_reset_password_instructions(resource_params)
     if successfully_sent?(resource)
       render :json => {:status => 'success',

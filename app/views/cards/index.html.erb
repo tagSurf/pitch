@@ -60,6 +60,10 @@
 		self.currentCard.subscribe(function(card){
 			if(!card){ return; }
 
+			//
+			CardUI.unbind();
+			CardUI.init(self);
+
 			self.currentCard().vote.subscribe(
 				function(vote){
 	      	if(vote === 'maybe' || vote === 'yes' || vote === 'no'){
@@ -80,9 +84,6 @@
 									if(self.cards().length > 0){
 
 										self.currentCard(self.cards.shift());
-										//this reinitializes the jquery pep plugin
-										CardUI.unbind();
-										CardUI.init();
 
 									} else {
 
@@ -102,9 +103,6 @@
 
 														if(successful && data.result.cards && data.result.cards.length > 0){
 															mapDataToCards(data.result.cards);
-															//this reinitializes the jquery pep plugin
-															CardUI.unbind();
-															CardUI.init();
 														} else {
 															self.currentCard(null);
 														}
@@ -143,7 +141,6 @@
 
 		(function(){
 			mapDataToCards(data);
-
 		})();
 	};
 
@@ -168,10 +165,11 @@
 			$parent.height(window.innerHeight - $parent.position().top);
 			CardUI.centerCard();
 		},
-		init : function(){
+		init : function(viewModel){
 		 	CardUI.$element = $("#card");
-      var observable = CardUI.viewModel.currentCard().candidate;
-      var settle = CardUI.viewModel.currentCard().vote;
+
+      var observable = viewModel.currentCard().candidate;
+      var settle = viewModel.currentCard().vote;
 
 			CardUI.$element.pep({
 				droppable: '.drop-target',
@@ -254,7 +252,10 @@
 			});
 		},
 		unbind : function(){
-			$.pep.unbind(CardUI.$element);
+			if(CardUI.$element){
+				//only true for the first card
+				$.pep.unbind(CardUI.$element);
+			}
 		}
 	};
 
@@ -264,7 +265,6 @@
 
 		CardUI.viewModel = new VoteViewModel(data, nextPage);
 		ko.applyBindings(CardUI.viewModel);
-		CardUI.init();
 	});
 	</script>
 <% end %>

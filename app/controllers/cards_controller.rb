@@ -7,7 +7,7 @@ class CardsController < ApplicationController
       return render_403
     end
     if user.is_admin
-      @all_cards = Card.all
+      @all_cards = Card.all.order("created_at DESC")
     else
       #this is a naiive approach to get new cards to vote on:
       #get the next 20 cards such that:
@@ -16,8 +16,8 @@ class CardsController < ApplicationController
       # - show maybe votes again, but always after new content
       #get all votes by this user ordered by date
       previous_votes = Vote.where("user_id = ? AND vote_type in ('no', 'yes')", user.id).map {|v| v.card_id}
-      if previous_votes.any?
-        @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, previous_votes).order("created_at DESC").limit(20)
+      if !previous_votes.any?
+        @all_cards = Card.where('author_id <> ?', user.id).order("created_at DESC").limit(20)
       else
         maybe_votes = Vote.where("user_id = ? AND vote_type = 'maybe'", user.id).map{|v| v.card_id}
         @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, maybe_votes).order("created_at DESC").limit(20)

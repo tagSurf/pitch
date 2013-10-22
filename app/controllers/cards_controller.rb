@@ -15,16 +15,16 @@ class CardsController < ApplicationController
       # - never show the user's cards
       # - show maybe votes again, but always after new content
       #get all votes by this user ordered by date
-      previous_votes = Vote.where("user_id = ? AND vote_type in ('no', 'yes')", user.id).map {|v| v.card_id}
-      if !previous_votes.any?
+      previous_vote_cards = Vote.where("user_id = ? AND vote_type in ('no', 'yes')", user.id).map {|v| v.card_id} 
+      if !previous_vote_cards.any?
         @all_cards = Card.where('author_id <> ?', user.id).order("created_at DESC").limit(20)
       else
-        maybe_votes = Vote.where("user_id = ? AND vote_type = 'maybe'", user.id).map{|v| v.card_id}
-        @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, maybe_votes).order("created_at DESC").limit(20)
+        maybe_vote_cards = Vote.where("user_id = ? AND vote_type = 'maybe' and card_id not in (?)", user.id, previous_vote_cards).map {|v| v.card_id}
+        @all_cards = Card.where('author_id <> ? AND id NOT in (?)', user.id, maybe_vote_cards + previous_vote_cards).order("created_at DESC").limit(20)
 
-        if @all_cards.length < 20
+        if @all_cards.length < 20 && maybe_vote_cards.length > 0
           #only include maybe votes if we don't have 20 cards votes
-          maybe_cards = Card.where('id in (?)', maybe_votes).order("created_at DESC").limit(20 - @all_cards.length)
+          maybe_cards = Card.where('id in (?)', maybe_vote_cards).order("created_at DESC").limit(20 - @all_cards.length)
           @all_cards = @all_cards + maybe_cards
         end
       end

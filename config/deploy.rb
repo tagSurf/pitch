@@ -2,7 +2,7 @@ require "bundler/capistrano"
 require "rvm/capistrano"
 
 set :application, "pitch"
-set :repository,  "git@github.com:Undclrd/pitch.git"
+set :repository,  "git@github.com:tagSurf/pitch.git"
 set :deploy_to, "/var/www/pitch"
 
 set :user, "ubuntu" #deployment server's user
